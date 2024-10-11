@@ -115,9 +115,9 @@ def main_worker(gpu, ngpus_per_node, args):
 
     # import network
     
-    gen_net = Generator()
+    gen_net = Generator(seq_len=30)
     print(gen_net)
-    dis_net = Discriminator()
+    dis_net = Discriminator(seq_length=30)
     print(dis_net)
     if not torch.cuda.is_available():
         print('using CPU, this will be slow')

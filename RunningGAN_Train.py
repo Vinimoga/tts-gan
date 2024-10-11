@@ -21,9 +21,9 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --dist-backend 'nccl' \
 --world-size 1 \
 --rank {args.rank} \
---dataset UniMiB \
+--dataset daghar \
 --bottom_width 8 \
---max_iter 50000 \
+--max_iter 3800 \
 --img_size 32 \
 --gen_model my_gen \
 --dis_model my_dis \
