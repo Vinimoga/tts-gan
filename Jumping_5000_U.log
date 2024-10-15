@@ -1,0 +1,485 @@
+Generator(
+  (l1): Linear(in_features=100, out_features=1500, bias=True)
+  (blocks): Gen_TransformerEncoder(
+    (0): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (1): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (2): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+  )
+  (deconv): Sequential(
+    (0): Conv2d(10, 3, kernel_size=(1, 1), stride=(1, 1))
+  )
+)
+Discriminator(
+  (0): PatchEmbedding_Linear(
+    (projection): Sequential(
+      (0): Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=1, s2=15)
+      (1): Linear(in_features=45, out_features=50, bias=True)
+    )
+  )
+  (1): Dis_TransformerEncoder(
+    (0): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (1): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (2): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+  )
+  (2): ClassificationHead(
+    (clshead): Sequential(
+      (0): Reduce('b n e -> b e', 'mean')
+      (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+      (2): Linear(in_features=50, out_features=1, bias=True)
+    )
+  )
+)
+DataParallel(
+  (module): Discriminator(
+    (0): PatchEmbedding_Linear(
+      (projection): Sequential(
+        (0): Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=1, s2=15)
+        (1): Linear(in_features=45, out_features=50, bias=True)
+      )
+    )
+    (1): Dis_TransformerEncoder(
+      (0): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+      (1): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+      (2): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+    )
+    (2): ClassificationHead(
+      (clshead): Sequential(
+        (0): Reduce('b n e -> b e', 'mean')
+        (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+        (2): Linear(in_features=50, out_features=1, bias=True)
+      )
+    )
+  )
+)
+x_train shape is (6055, 3, 1, 150), x_test shape is (1524, 3, 1, 150)
+y_train shape is (6055,), y_test shape is (1524,)
+return single class data and labels, class is Jumping
+train_data shape is (600, 3, 1, 150), test_data shape is (146, 3, 1, 150)
+train label shape is (600,), test data shape is (146,)
+x_train shape is (6055, 3, 1, 150), x_test shape is (1524, 3, 1, 150)
+y_train shape is (6055,), y_test shape is (1524,)
+return single class data and labels, class is Jumping
+train_data shape is (600, 3, 1, 150), test_data shape is (146, 3, 1, 150)
+train label shape is (600,), test data shape is (146,)
+38
+Epochs between ckechpoint: 26
+
+
+
+
+Saving checkpoint 1 in logs/Jumping_5000_U_2024_10_15_00_13_47/Model
+
+
+
+
+[Epoch 0/132] [Batch 0/38] [D loss: 1.171687] [G loss: 0.745932] [ema: 0.000000] 
+[Epoch 1/132] [Batch 0/38] [D loss: 0.347481] [G loss: 0.370370] [ema: 0.833262] 
+[Epoch 2/132] [Batch 0/38] [D loss: 0.633231] [G loss: 0.141949] [ema: 0.912832] 
+[Epoch 3/132] [Batch 0/38] [D loss: 0.488407] [G loss: 0.138334] [ema: 0.941009] 
+[Epoch 4/132] [Batch 0/38] [D loss: 0.397249] [G loss: 0.205023] [ema: 0.955422] 
+[Epoch 5/132] [Batch 0/38] [D loss: 0.493774] [G loss: 0.168401] [ema: 0.964176] 
+[Epoch 6/132] [Batch 0/38] [D loss: 0.384908] [G loss: 0.232053] [ema: 0.970056] 
+[Epoch 7/132] [Batch 0/38] [D loss: 0.388574] [G loss: 0.223005] [ema: 0.974278] 
+[Epoch 8/132] [Batch 0/38] [D loss: 0.361521] [G loss: 0.270278] [ema: 0.977457] 
+[Epoch 9/132] [Batch 0/38] [D loss: 0.252801] [G loss: 0.233867] [ema: 0.979937] 
+[Epoch 10/132] [Batch 0/38] [D loss: 0.311875] [G loss: 0.273648] [ema: 0.981925] 
+[Epoch 11/132] [Batch 0/38] [D loss: 0.357811] [G loss: 0.223197] [ema: 0.983554] 
+[Epoch 12/132] [Batch 0/38] [D loss: 0.478019] [G loss: 0.170546] [ema: 0.984914] 
+[Epoch 13/132] [Batch 0/38] [D loss: 0.290105] [G loss: 0.230024] [ema: 0.986067] 
+[Epoch 14/132] [Batch 0/38] [D loss: 0.278203] [G loss: 0.271643] [ema: 0.987055] 
+[Epoch 15/132] [Batch 0/38] [D loss: 0.303287] [G loss: 0.260105] [ema: 0.987913] 
+[Epoch 16/132] [Batch 0/38] [D loss: 0.304661] [G loss: 0.183699] [ema: 0.988664] 
+[Epoch 17/132] [Batch 0/38] [D loss: 0.381871] [G loss: 0.187343] [ema: 0.989328] 
+[Epoch 18/132] [Batch 0/38] [D loss: 0.365097] [G loss: 0.231236] [ema: 0.989917] 
+[Epoch 19/132] [Batch 0/38] [D loss: 0.334518] [G loss: 0.228222] [ema: 0.990446] 
+[Epoch 20/132] [Batch 0/38] [D loss: 0.398253] [G loss: 0.201671] [ema: 0.990921] 
+[Epoch 21/132] [Batch 0/38] [D loss: 0.457390] [G loss: 0.162090] [ema: 0.991352] 
+[Epoch 22/132] [Batch 0/38] [D loss: 0.340510] [G loss: 0.255229] [ema: 0.991743] 
+[Epoch 23/132] [Batch 0/38] [D loss: 0.395965] [G loss: 0.199796] [ema: 0.992101] 
+[Epoch 24/132] [Batch 0/38] [D loss: 0.398336] [G loss: 0.186538] [ema: 0.992429] 
+[Epoch 25/132] [Batch 0/38] [D loss: 0.342652] [G loss: 0.246275] [ema: 0.992730] 
+
+
+
+
+Saving checkpoint 2 in logs/Jumping_5000_U_2024_10_15_00_13_47/Model
+
+
+
+
+[Epoch 26/132] [Batch 0/38] [D loss: 0.363180] [G loss: 0.192408] [ema: 0.993009] 
+[Epoch 27/132] [Batch 0/38] [D loss: 0.375363] [G loss: 0.232302] [ema: 0.993267] 
+[Epoch 28/132] [Batch 0/38] [D loss: 0.369088] [G loss: 0.215036] [ema: 0.993507] 
+[Epoch 29/132] [Batch 0/38] [D loss: 0.336410] [G loss: 0.202339] [ema: 0.993730] 
+[Epoch 30/132] [Batch 0/38] [D loss: 0.344988] [G loss: 0.232019] [ema: 0.993938] 
+[Epoch 31/132] [Batch 0/38] [D loss: 0.393552] [G loss: 0.241479] [ema: 0.994133] 
+[Epoch 32/132] [Batch 0/38] [D loss: 0.402575] [G loss: 0.238144] [ema: 0.994316] 
+[Epoch 33/132] [Batch 0/38] [D loss: 0.445455] [G loss: 0.204812] [ema: 0.994488] 
+[Epoch 34/132] [Batch 0/38] [D loss: 0.381475] [G loss: 0.159225] [ema: 0.994649] 
+[Epoch 35/132] [Batch 0/38] [D loss: 0.450809] [G loss: 0.168666] [ema: 0.994802] 
+[Epoch 36/132] [Batch 0/38] [D loss: 0.441485] [G loss: 0.151223] [ema: 0.994946] 
+[Epoch 37/132] [Batch 0/38] [D loss: 0.410378] [G loss: 0.180306] [ema: 0.995082] 
+[Epoch 38/132] [Batch 0/38] [D loss: 0.459620] [G loss: 0.179543] [ema: 0.995211] 
+[Epoch 39/132] [Batch 0/38] [D loss: 0.492325] [G loss: 0.205358] [ema: 0.995334] 
+[Epoch 40/132] [Batch 0/38] [D loss: 0.495324] [G loss: 0.164059] [ema: 0.995450] 
+[Epoch 41/132] [Batch 0/38] [D loss: 0.450360] [G loss: 0.231619] [ema: 0.995561] 
+[Epoch 42/132] [Batch 0/38] [D loss: 0.496002] [G loss: 0.175716] [ema: 0.995666] 
+[Epoch 43/132] [Batch 0/38] [D loss: 0.393045] [G loss: 0.208899] [ema: 0.995767] 
+[Epoch 44/132] [Batch 0/38] [D loss: 0.457650] [G loss: 0.202598] [ema: 0.995863] 
+[Epoch 45/132] [Batch 0/38] [D loss: 0.387737] [G loss: 0.198090] [ema: 0.995955] 
+[Epoch 46/132] [Batch 0/38] [D loss: 0.542862] [G loss: 0.172148] [ema: 0.996042] 
+[Epoch 47/132] [Batch 0/38] [D loss: 0.389340] [G loss: 0.163463] [ema: 0.996127] 
+[Epoch 48/132] [Batch 0/38] [D loss: 0.455619] [G loss: 0.182786] [ema: 0.996207] 
+[Epoch 49/132] [Batch 0/38] [D loss: 0.393133] [G loss: 0.216747] [ema: 0.996284] 
+[Epoch 50/132] [Batch 0/38] [D loss: 0.475973] [G loss: 0.212567] [ema: 0.996359] 
+[Epoch 51/132] [Batch 0/38] [D loss: 0.319775] [G loss: 0.249106] [ema: 0.996430] 
+
+
+
+
+Saving checkpoint 3 in logs/Jumping_5000_U_2024_10_15_00_13_47/Model
+
+
+
+
+[Epoch 52/132] [Batch 0/38] [D loss: 0.422532] [G loss: 0.167453] [ema: 0.996498] 
+[Epoch 53/132] [Batch 0/38] [D loss: 0.352223] [G loss: 0.164564] [ema: 0.996564] 
+[Epoch 54/132] [Batch 0/38] [D loss: 0.362771] [G loss: 0.226480] [ema: 0.996628] 
+[Epoch 55/132] [Batch 0/38] [D loss: 0.445088] [G loss: 0.209011] [ema: 0.996689] 
+[Epoch 56/132] [Batch 0/38] [D loss: 0.547505] [G loss: 0.149245] [ema: 0.996748] 
+[Epoch 57/132] [Batch 0/38] [D loss: 0.393527] [G loss: 0.226640] [ema: 0.996805] 
+[Epoch 58/132] [Batch 0/38] [D loss: 0.397949] [G loss: 0.170911] [ema: 0.996860] 
+[Epoch 59/132] [Batch 0/38] [D loss: 0.507110] [G loss: 0.148638] [ema: 0.996913] 
+[Epoch 60/132] [Batch 0/38] [D loss: 0.360586] [G loss: 0.231088] [ema: 0.996964] 
+[Epoch 61/132] [Batch 0/38] [D loss: 0.378651] [G loss: 0.223321] [ema: 0.997014] 
+[Epoch 62/132] [Batch 0/38] [D loss: 0.436624] [G loss: 0.193853] [ema: 0.997062] 
+[Epoch 63/132] [Batch 0/38] [D loss: 0.384376] [G loss: 0.235787] [ema: 0.997109] 
+[Epoch 64/132] [Batch 0/38] [D loss: 0.418175] [G loss: 0.198416] [ema: 0.997154] 
+[Epoch 65/132] [Batch 0/38] [D loss: 0.399810] [G loss: 0.194604] [ema: 0.997198] 
+[Epoch 66/132] [Batch 0/38] [D loss: 0.392224] [G loss: 0.157753] [ema: 0.997240] 
+[Epoch 67/132] [Batch 0/38] [D loss: 0.326954] [G loss: 0.244704] [ema: 0.997281] 
+[Epoch 68/132] [Batch 0/38] [D loss: 0.422458] [G loss: 0.197591] [ema: 0.997321] 
+[Epoch 69/132] [Batch 0/38] [D loss: 0.299310] [G loss: 0.211472] [ema: 0.997360] 
+[Epoch 70/132] [Batch 0/38] [D loss: 0.418684] [G loss: 0.177680] [ema: 0.997398] 
+[Epoch 71/132] [Batch 0/38] [D loss: 0.326550] [G loss: 0.265936] [ema: 0.997434] 
+[Epoch 72/132] [Batch 0/38] [D loss: 0.413333] [G loss: 0.259263] [ema: 0.997470] 
+[Epoch 73/132] [Batch 0/38] [D loss: 0.374389] [G loss: 0.256554] [ema: 0.997504] 
+[Epoch 74/132] [Batch 0/38] [D loss: 0.361516] [G loss: 0.200716] [ema: 0.997538] 
+[Epoch 75/132] [Batch 0/38] [D loss: 0.404756] [G loss: 0.224317] [ema: 0.997571] 
+[Epoch 76/132] [Batch 0/38] [D loss: 0.330106] [G loss: 0.247829] [ema: 0.997603] 
+[Epoch 77/132] [Batch 0/38] [D loss: 0.330490] [G loss: 0.244493] [ema: 0.997634] 
+
+
+
+
+Saving checkpoint 4 in logs/Jumping_5000_U_2024_10_15_00_13_47/Model
+
+
+
+
+[Epoch 78/132] [Batch 0/38] [D loss: 0.333560] [G loss: 0.213758] [ema: 0.997664] 
+[Epoch 79/132] [Batch 0/38] [D loss: 0.361628] [G loss: 0.236093] [ema: 0.997694] 
+[Epoch 80/132] [Batch 0/38] [D loss: 0.339858] [G loss: 0.215756] [ema: 0.997723] 
+[Epoch 81/132] [Batch 0/38] [D loss: 0.301759] [G loss: 0.243272] [ema: 0.997751] 
+[Epoch 82/132] [Batch 0/38] [D loss: 0.352418] [G loss: 0.223097] [ema: 0.997778] 
+[Epoch 83/132] [Batch 0/38] [D loss: 0.321499] [G loss: 0.225452] [ema: 0.997805] 
+[Epoch 84/132] [Batch 0/38] [D loss: 0.358501] [G loss: 0.233117] [ema: 0.997831] 
+[Epoch 85/132] [Batch 0/38] [D loss: 0.335578] [G loss: 0.252079] [ema: 0.997856] 
+[Epoch 86/132] [Batch 0/38] [D loss: 0.329232] [G loss: 0.202464] [ema: 0.997881] 
+[Epoch 87/132] [Batch 0/38] [D loss: 0.334677] [G loss: 0.202100] [ema: 0.997906] 
+[Epoch 88/132] [Batch 0/38] [D loss: 0.354255] [G loss: 0.227887] [ema: 0.997929] 
+[Epoch 89/132] [Batch 0/38] [D loss: 0.332490] [G loss: 0.256775] [ema: 0.997953] 
+[Epoch 90/132] [Batch 0/38] [D loss: 0.342433] [G loss: 0.245890] [ema: 0.997975] 
+[Epoch 91/132] [Batch 0/38] [D loss: 0.301981] [G loss: 0.201493] [ema: 0.997998] 
+[Epoch 92/132] [Batch 0/38] [D loss: 0.329059] [G loss: 0.207232] [ema: 0.998019] 
+[Epoch 93/132] [Batch 0/38] [D loss: 0.372022] [G loss: 0.240056] [ema: 0.998041] 
+[Epoch 94/132] [Batch 0/38] [D loss: 0.372207] [G loss: 0.192337] [ema: 0.998061] 
+[Epoch 95/132] [Batch 0/38] [D loss: 0.353963] [G loss: 0.215403] [ema: 0.998082] 
+[Epoch 96/132] [Batch 0/38] [D loss: 0.380619] [G loss: 0.235047] [ema: 0.998102] 
+[Epoch 97/132] [Batch 0/38] [D loss: 0.324028] [G loss: 0.239364] [ema: 0.998121] 
+[Epoch 98/132] [Batch 0/38] [D loss: 0.364861] [G loss: 0.188711] [ema: 0.998140] 
+[Epoch 99/132] [Batch 0/38] [D loss: 0.338966] [G loss: 0.221884] [ema: 0.998159] 
+[Epoch 100/132] [Batch 0/38] [D loss: 0.361228] [G loss: 0.160579] [ema: 0.998178] 
+[Epoch 101/132] [Batch 0/38] [D loss: 0.323121] [G loss: 0.250420] [ema: 0.998196] 
+[Epoch 102/132] [Batch 0/38] [D loss: 0.360095] [G loss: 0.245409] [ema: 0.998213] 
+[Epoch 103/132] [Batch 0/38] [D loss: 0.353711] [G loss: 0.223318] [ema: 0.998231] 
+
+
+
+
+Saving checkpoint 5 in logs/Jumping_5000_U_2024_10_15_00_13_47/Model
+
+
+
+
+[Epoch 104/132] [Batch 0/38] [D loss: 0.299394] [G loss: 0.245165] [ema: 0.998248] 
+[Epoch 105/132] [Batch 0/38] [D loss: 0.283500] [G loss: 0.241815] [ema: 0.998264] 
+[Epoch 106/132] [Batch 0/38] [D loss: 0.369897] [G loss: 0.258905] [ema: 0.998281] 
+[Epoch 107/132] [Batch 0/38] [D loss: 0.333977] [G loss: 0.199223] [ema: 0.998297] 
+[Epoch 108/132] [Batch 0/38] [D loss: 0.365519] [G loss: 0.266513] [ema: 0.998312] 
+[Epoch 109/132] [Batch 0/38] [D loss: 0.322737] [G loss: 0.236227] [ema: 0.998328] 
+[Epoch 110/132] [Batch 0/38] [D loss: 0.336588] [G loss: 0.202364] [ema: 0.998343] 
+[Epoch 111/132] [Batch 0/38] [D loss: 0.393719] [G loss: 0.166658] [ema: 0.998358] 
+[Epoch 112/132] [Batch 0/38] [D loss: 0.324519] [G loss: 0.219149] [ema: 0.998373] 
+[Epoch 113/132] [Batch 0/38] [D loss: 0.352379] [G loss: 0.167197] [ema: 0.998387] 
+[Epoch 114/132] [Batch 0/38] [D loss: 0.293032] [G loss: 0.218616] [ema: 0.998401] 
+[Epoch 115/132] [Batch 0/38] [D loss: 0.308545] [G loss: 0.221108] [ema: 0.998415] 
+[Epoch 116/132] [Batch 0/38] [D loss: 0.359726] [G loss: 0.190656] [ema: 0.998429] 
+[Epoch 117/132] [Batch 0/38] [D loss: 0.372969] [G loss: 0.223286] [ema: 0.998442] 
+[Epoch 118/132] [Batch 0/38] [D loss: 0.357323] [G loss: 0.259343] [ema: 0.998455] 
+[Epoch 119/132] [Batch 0/38] [D loss: 0.304300] [G loss: 0.222135] [ema: 0.998468] 
+[Epoch 120/132] [Batch 0/38] [D loss: 0.306072] [G loss: 0.224266] [ema: 0.998481] 
+[Epoch 121/132] [Batch 0/38] [D loss: 0.348512] [G loss: 0.219066] [ema: 0.998494] 
+[Epoch 122/132] [Batch 0/38] [D loss: 0.335639] [G loss: 0.156873] [ema: 0.998506] 
+[Epoch 123/132] [Batch 0/38] [D loss: 0.314973] [G loss: 0.192088] [ema: 0.998518] 
+[Epoch 124/132] [Batch 0/38] [D loss: 0.380454] [G loss: 0.215897] [ema: 0.998530] 
+[Epoch 125/132] [Batch 0/38] [D loss: 0.317578] [G loss: 0.229874] [ema: 0.998542] 
+[Epoch 126/132] [Batch 0/38] [D loss: 0.392506] [G loss: 0.174515] [ema: 0.998553] 
+[Epoch 127/132] [Batch 0/38] [D loss: 0.340632] [G loss: 0.244788] [ema: 0.998565] 
+[Epoch 128/132] [Batch 0/38] [D loss: 0.334911] [G loss: 0.212467] [ema: 0.998576] 
+[Epoch 129/132] [Batch 0/38] [D loss: 0.361219] [G loss: 0.205783] [ema: 0.998587] 
+
+
+
+
+Saving checkpoint 6 in logs/Jumping_5000_U_2024_10_15_00_13_47/Model
+
+
+
+
+[Epoch 130/132] [Batch 0/38] [D loss: 0.305927] [G loss: 0.276768] [ema: 0.998598] 
+[Epoch 131/132] [Batch 0/38] [D loss: 0.282817] [G loss: 0.190503] [ema: 0.998609] 

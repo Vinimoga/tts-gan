@@ -309,15 +309,12 @@ class unimib_load_dataset(Dataset):
 class daghar_load_dataset(Dataset):
     def __init__(self, 
         verbose = False,
-        split_subj = dict
-                    (train_subj = [4,5,6,7,8,10,11,12,14,15,19,20,21,22,24,26,27,29],
-                    validation_subj = [1,9,16,23,25,28],
-                    test_subj = [2,3,13,17,18,30]),
-        class_name = "Running"):
+        class_name = "Running",
+        path = ):
 
         self.class_name = class_name
 
-        class_data, class_labels = self.dahar_run_load_dataset()
+        class_data, class_labels = self.load_dataset(path = path)
         
         self.class_data = torch.tensor(class_data)
         self.class_labels = np.array(class_labels)
@@ -331,7 +328,7 @@ class daghar_load_dataset(Dataset):
         print(f'label shape is {self.class_labels.shape}')
         
 
-    def dahar_run_load_dataset(self, path: str = '/workspaces/container-workspace/DAHAR_GANs/run.csv'):
+    def load_dataset(self, path: str = '/workspaces/container-workspace/DAHAR_GANs/run.csv'):
         my_data = np.genfromtxt(path, delimiter=',')
         class_data = []
         class_label = []
