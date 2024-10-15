@@ -27,7 +27,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN.py \
 --rank {args.rank} \
 --dataset UniMiB \
 --bottom_width 8 \
---max_iter 31692 \
+--max_iter 50000 \
 --img_size 32 \
 --gen_model my_gen \
 --dis_model my_dis \
@@ -53,7 +53,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN.py \
 --n_critic 1 \
 --val_freq 20 \
 --print_freq 50 \
---t_checkpoint 5 \
+--t_checkpoint 262 \
 --grow_steps 0 0 \
 --fade_in 0 \
 --patch_size 2 \
@@ -62,7 +62,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN.py \
 --ema 0.9999 \
 --diff_aug translation,cutout,color \
 --class_name Jumping \
---exp_name Jumping_test1")
+--exp_name Jumping_50000_U")
 
 '''
 os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN.py \

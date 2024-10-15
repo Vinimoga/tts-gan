@@ -11,8 +11,7 @@ class Synthetic_Dataset(Dataset):
     def __init__(self, 
                  Jumping_model_path = './pre-trained-models/JumpingGAN_checkpoint',
                  Running_model_path = './pre-trained-models/RunningGAN_checkpoint',
-                 sample_size = 1000
-                 ):
+                 sample_size = 1000):
         
         self.sample_size = sample_size
         
@@ -57,5 +56,44 @@ class Synthetic_Dataset(Dataset):
     
     def __getitem__(self, idx):
         return self.combined_train_data[idx], self.combined_train_label[idx]
+    
+class Single_Class_Synthetic_Dataset(Dataset):
+    def __init__(self, 
+                 path = './pre-trained-models/RunningGAN_checkpoint',
+                 sample_size = 600,
+                 seq_len = 150,
+                 latent_dim=100,
+                 channels = 3,
+                 label = 0):
+        
+        self.sample_size = sample_size
+        
+        #Generate Data
+        gen_net = Generator(seq_len=seq_len, channels=channels, latent_dim=latent_dim)
+        ckp = torch.load(path,  map_location=torch.device('cpu')) #take off map_location if GPU
+        gen_net.load_state_dict(ckp['gen_state_dict'])
+        
+        try:
+            print(f'Checkpoint epochs: {ckp["epoch"]}')
+        except:
+            print(f'Epochs: 0')
+
+        #generate synthetic data with label
+        z = torch.FloatTensor(np.random.normal(0, 1, (self.sample_size, 100)))
+        self.syn = gen_net(z)
+        self.syn = self.syn.detach().numpy()
+        self.label = np.full(len(self.syn), label)
+        
+        self.label = self.label.reshape(self.label.shape[0], 1)
+        
+        print(self.syn.shape)
+        print(self.label.shape)
+        
+        
+    def __len__(self):
+        return self.sample_size
+    
+    def __getitem__(self, idx):
+        return self.syn[idx], self.label[idx]
     
     
