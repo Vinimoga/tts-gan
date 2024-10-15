@@ -14,7 +14,7 @@ def parse_args():
 args = parse_args()
 #t_checkpoint
 
-os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_daghar.py \
+os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 -gen_bs 16 \
 -dis_bs 16 \
 --dist-url 'tcp://localhost:4321' \
@@ -23,7 +23,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_daghar.py \
 --rank {args.rank} \
 --dataset daghar \
 --bottom_width 8 \
---max_iter 5000 \
+--max_iter 50000 \
 --img_size 32 \
 --gen_model my_gen \
 --dis_model my_dis \
@@ -49,7 +49,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_daghar.py \
 --n_critic 1 \
 --val_freq 20 \
 --print_freq 100 \
---t_checkpoint 1 \
+--t_checkpoint 10 \
 --grow_steps 0 0 \
 --fade_in 0 \
 --patch_size 2 \
@@ -57,8 +57,8 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_daghar.py \
 --ema_warmup 0.1 \
 --ema 0.9999 \
 --diff_aug translation,cutout,color \
---class_name Running \
---exp_name Running_5000_D_30")
+--class_name run \
+--exp_name Running_50000_D_30")
 
 
 
