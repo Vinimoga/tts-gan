@@ -12,7 +12,14 @@ def parse_args():
 
     return opt
 args = parse_args()
-#t_checkpoint
+
+'''
+For Each experiment change:
+    -max_iter : for the maximum number of iterations
+    -t_checkpoint : for the number of epochs after the model will save a checkpoint
+    -class_name : for the name of the class of daghar dataset or the UniMib data
+    -exp_name : for the name of the experiment that will be saaved in log, along with the date
+'''
 
 os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 -gen_bs 16 \
@@ -49,7 +56,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --n_critic 1 \
 --val_freq 20 \
 --print_freq 100 \
---t_checkpoint 10 \
+--t_checkpoint 9 \
 --grow_steps 0 0 \
 --fade_in 0 \
 --patch_size 2 \
@@ -57,9 +64,8 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --ema_warmup 0.1 \
 --ema 0.9999 \
 --diff_aug translation,cutout,color \
---class_name run \
---exp_name Running_50000_D_30")
-
+--class_name sit \
+--exp_name Sit_50000_D_30")
 
 
 '''
