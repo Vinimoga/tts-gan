@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.utils import data
 
 import numpy as np
+import pandas as pd
 
 import os
 import sys
@@ -37,7 +38,8 @@ class DagharUniclassEvaluation():
                  seq_len: int,
                  save_path: str = '/workspaces/container-workspace/tts-gan/Notebooks/Daghar_TTSGAN_data/',
                  data_path: str = '/workspaces/container-workspace/DAHAR_GANs/',
-                 show = True):
+                 show: bool = True,
+                 iter: int = 5000):
     
         self.data_path = data_path
         self.models_path = models_path
@@ -45,6 +47,7 @@ class DagharUniclassEvaluation():
         self.save_path = save_path
         self.seq_len = seq_len
         self.show = show
+        self.iter = iter
 
         print(f'Data path is located in: {self.data_path}')
         print(f'Models path is located in: {self.models_path}')
@@ -82,13 +85,31 @@ class DagharUniclassEvaluation():
         c= ['steelblue', 'orangered', 'green']
 
         if self.show:
-            self.show_raw_data(time_domain, c, title=f'{self.class_name} Time Domain Raw Data')
-            self.show_raw_data(frequency_domain, c, title=f'{self.class_name} Frequency Domain Raw Data')
+            self.show_raw_data(time_domain, c, title=f'{self.class_name} \
+                               Time Domain Raw Data for {self.iter} iter')
+            self.show_raw_data(frequency_domain, c, title=f'{self.class_name} \
+                               Frequency Domain Raw Data for {self.iter} iter')
 
-        self.TSNE_visualization(self.original_data, self.syn_data, title=f'Time domain tSNE: {self.class_name}')
-        self.TSNE_visualization(self.original_fft_data, self.syn_fft_data, title=f'Time domain tSNE: {self.class_name}')        
-
+        self.TSNE_visualization(self.original_data, self.syn_data, 
+                                title=f'Time domain tSNE: {self.class_name} for {self.iter} iter',
+                                show=self.show)
+        self.TSNE_visualization(self.original_fft_data, self.syn_fft_data, 
+                                title=f'Frequency domain tSNE: {self.class_name} for {self.iter} iter', 
+                                show=self.show)        
         
+        self.fe_original_data = self.FeatureExtractor(self.original_data.unsqueeze(dim=2))
+        self.fe_syn_data = self.FeatureExtractor(self.syn_data.unsqueeze(dim=2))
+
+        self.fe_original_fft_data = self.FeatureExtractor(self.original_data.unsqueeze(dim=2))
+        self.fe_syn_fft_data = self.FeatureExtractor(self.syn_fft_data.unsqueeze(dim=2))
+        #########3for i in range(10):
+        self.dictionary = self.cossine_similarity(self.fe_original_data, self.fe_syn_data,
+                                                      self.fe_original_fft_data, self.fe_syn_fft_data)
+        
+        #self.dataframe[f'{self.class_name}'] = pd.DataFrame(self.dictionary)
+        #pd.set_option('display.precision', 4)
+
+        print(f'{self.class_name} = {self.dictionary}')
 
     
     def extract_dataloader(self, dataloader):
@@ -141,6 +162,8 @@ class DagharUniclassEvaluation():
         '''
         #print(data.shape)
 
+        data = np.abs(data)
+
         fmedian = data.median(dim=dim)[0]
         #print(f'median shape: {fmedian.shape}')
         fmean = data.mean(dim=dim)
@@ -157,7 +180,7 @@ class DagharUniclassEvaluation():
         #print(f'min value shape: {fmin.shape}')
         
         temp = torch.cat((fmedian, fmean, fstd, fvar, frms, fmax, fmin), dim=-1)
-        #print(temp.shape)
+        #print(temp.mean(dim=0).shape)
 
         return temp.mean(dim=0) ##Take mean of a batch 
 
@@ -230,3 +253,16 @@ class DagharUniclassEvaluation():
         #         plt.show()    
 
         plt.show()
+
+    def cossine_similarity(self, original, synthetic, original_fft, synthetic_fft): 
+        cos_sim = nn.CosineSimilarity(dim=-1)
+
+        # Calcular a similaridade cosseno para cada par de vetores
+        time_similarity = cos_sim(original, synthetic) 
+        frequency_similarity = cos_sim(original_fft, synthetic_fft)
+
+        # Calcular a média da similaridade cosseno
+        average_similarity_original = {'Time': time_similarity.mean().item(),
+                                       'Frequency': frequency_similarity.mean().item()} 
+
+        return average_similarity_original
