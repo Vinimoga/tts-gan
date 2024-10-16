@@ -30,7 +30,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --rank {args.rank} \
 --dataset daghar \
 --bottom_width 8 \
---max_iter 50000 \
+--max_iter 5000 \
 --img_size 32 \
 --gen_model my_gen \
 --dis_model my_dis \
@@ -56,7 +56,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --n_critic 1 \
 --val_freq 20 \
 --print_freq 100 \
---t_checkpoint 9 \
+--t_checkpoint 1 \
 --grow_steps 0 0 \
 --fade_in 0 \
 --patch_size 2 \
@@ -64,8 +64,8 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --ema_warmup 0.1 \
 --ema 0.9999 \
 --diff_aug translation,cutout,color \
---class_name sit \
---exp_name Sit_50000_D_30")
+--class_name upstairs \
+--exp_name Upstairs_5000_D_30")
 
 
 '''
