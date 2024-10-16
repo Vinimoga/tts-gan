@@ -31,16 +31,17 @@ class DagharUniclassEvaluation():
     
     
     '''
-
     def __init__(self,
-                 models_path,
-                 class_name,
-                 seq_len,
-                 data_path = '/workspaces/container-workspace/DAHAR_GANs/'):
+                 models_path: str,
+                 class_name: str,
+                 seq_len: int,
+                 save_path: str,
+                 data_path: str = '/workspaces/container-workspace/DAHAR_GANs/'):
     
         self.data_path = data_path
         self.models_path = models_path
         self.class_name = class_name
+        self.save_path = save_path
         self.seq_len = seq_len
 
         print(f'Data path is located in: {self.data_path}')
@@ -64,12 +65,10 @@ class DagharUniclassEvaluation():
         #Extract random vector from dataloader
         self.syn_data = self.extract_dataloader(syn_data_loader)
         self.original_data = self.extract_dataloader(original_data_loader)[:len(self.syn_data)]
-        print(self.syn_data.shape)
 
         #Garant numerical stability and make data into shape (batch, channels, seq_len)
         self.syn_data = torch.from_numpy(self.syn_data).type(torch.float)
         self.original_data = torch.from_numpy(self.original_data).type(torch.float)
-        print(self.syn_data.shape)
 
         #Get FFT data to evaluate
         self.syn_fft_data = fft.fft(self.syn_data, dim=-1)
