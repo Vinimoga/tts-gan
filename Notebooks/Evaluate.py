@@ -35,14 +35,16 @@ class DagharUniclassEvaluation():
                  models_path: str,
                  class_name: str,
                  seq_len: int,
-                 save_path: str,
-                 data_path: str = '/workspaces/container-workspace/DAHAR_GANs/'):
+                 save_path: str = '/workspaces/container-workspace/tts-gan/Notebooks/Daghar_TTSGAN_data/',
+                 data_path: str = '/workspaces/container-workspace/DAHAR_GANs/',
+                 show = True):
     
         self.data_path = data_path
         self.models_path = models_path
         self.class_name = class_name
         self.save_path = save_path
         self.seq_len = seq_len
+        self.show = show
 
         print(f'Data path is located in: {self.data_path}')
         print(f'Models path is located in: {self.models_path}')
@@ -79,8 +81,14 @@ class DagharUniclassEvaluation():
         frequency_domain = [self.original_fft_data, self.syn_fft_data]
         c= ['steelblue', 'orangered', 'green']
 
-        self.show_raw_data(time_domain, c, title='Time Domain Raw Data')
-        self.show_raw_data(frequency_domain, c, title='Frequency Domain Raw Data')
+        if self.show:
+            self.show_raw_data(time_domain, c, title=f'{self.class_name} Time Domain Raw Data')
+            self.show_raw_data(frequency_domain, c, title=f'{self.class_name} Frequency Domain Raw Data')
+
+        self.TSNE_visualization(self.original_data, self.syn_data, title=f'Time domain tSNE: {self.class_name}')
+        self.TSNE_visualization(self.original_fft_data, self.syn_fft_data, title=f'Time domain tSNE: {self.class_name}')        
+
+        
 
     
     def extract_dataloader(self, dataloader):
@@ -152,3 +160,73 @@ class DagharUniclassEvaluation():
         #print(temp.shape)
 
         return temp.mean(dim=0) ##Take mean of a batch 
+
+    def TSNE_visualization(self, original, synthetic, title = 't-SNE plot', random = None, show=True):
+        '''
+
+        Data original and synthetic is expected to be in shape (batch, timeframe, channel), for 
+        example (600, 30, 3)
+
+        '''
+        original = np.transpose(original, (0, 2, 1))
+        synthetic = np.transpose(synthetic, (0, 2, 1))
+
+        l = len(original)
+        idx = np.random.permutation(l)
+
+        # Data preprocessing
+        original = np.asarray(original)
+        synthetic = np.asarray(synthetic)  
+        #random = np.asarray(random)
+
+        original = np.abs(original[idx])
+        synthetic = np.abs(synthetic[idx])
+        #random = random[idx]
+        
+
+        no, seq_len, dim = original.shape  
+
+        for i in range(l):
+            if (i == 0):
+                prep = np.reshape(np.mean(original[0,:,:], 1), [1, seq_len])
+                prep_hat = np.reshape(np.mean(synthetic[0,:,:], 1), [1, seq_len])
+                #prep_random = np.reshape(np.mean(random[0,:,:], 1), [1, seq_len])
+
+            else:
+                prep = np.concatenate((prep, 
+                                            np.reshape(np.mean(original[i,:,:],1), [1, seq_len])))
+                prep_hat = np.concatenate((prep_hat, 
+                                            np.reshape(np.mean(synthetic[i,:,:],1), [1, seq_len])))
+                #prep_random = np.concatenate((prep_random,
+                #                            np.reshape(np.mean(random[i,:,:], 1), [1, seq_len])))
+                
+        # Do t-SNE Analysis together       
+        prep_data_final = np.concatenate((prep, prep_hat), axis = 0) #(prep, prep_hat, prep_random)
+        #print(prep_data_final.shape)
+        # TSNE anlaysis
+        tsne = TSNE(n_components = 2, verbose = 1, perplexity = 40, n_iter = 300)
+        tsne_results = tsne.fit_transform(prep_data_final)
+        #print(tsne_results.shape)
+        # Plotting
+        if not show:
+            return tsne_results
+        
+        f, ax = plt.subplots(1)
+
+        plt.scatter(tsne_results[:l,0], tsne_results[:l,1], 
+                    c = 'red', alpha = 0.2, label = "Original")
+        
+        plt.scatter(tsne_results[l:2*l,0], tsne_results[l:2*l,1], 
+                    c = 'blue', alpha = 0.2, label = "Synthetic")
+        
+        #plt.scatter(tsne_results[1200:1800,0], tsne_results[1200:1800,1], 
+        #            c = '#ffa600', alpha = 0.2, label = "Random")
+
+        ax.legend()
+
+        plt.title(title)
+        plt.xlabel('x-tsne')
+        plt.ylabel('y_tsne')
+        #         plt.show()    
+
+        plt.show()
