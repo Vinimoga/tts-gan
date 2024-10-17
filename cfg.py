@@ -135,10 +135,10 @@ def parse_args():
         default=100,
         help='interval between each verbose')
     parser.add_argument(
-        '--t_checkpoint',
+        '--checkpoint_number',
         type=int,
         default=1000,
-        help='interval btween saving a checkpoint')
+        help='interval between saving a checkpoint')
     parser.add_argument(
         '--load_path',
         type=str,

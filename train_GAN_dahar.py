@@ -212,6 +212,7 @@ def main_worker(gpu, ngpus_per_node, args):
     if args.max_iter:
         args.max_epoch = np.ceil(args.max_iter * args.n_critic / len(train_loader))
 
+    t_checkpoint = int(np.ceil(args.max_epoch / args.checkpoint_number))
     # initial
     fixed_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (100, args.latent_dim)))
     avg_gen_net = deepcopy(gen_net).cpu()
@@ -271,7 +272,7 @@ def main_worker(gpu, ngpus_per_node, args):
     }
 
     # train loop
-    print(f'Epochs between ckechpoint: {args.t_checkpoint}')
+    print(f'Epochs between ckechpoint: {t_checkpoint}')
     t=0
     for epoch in range(int(start_epoch), int(args.max_epoch)):
 #         train_sampler.set_epoch(epoch)
@@ -286,12 +287,12 @@ def main_worker(gpu, ngpus_per_node, args):
 #         else:
 #             #only train discriminator 
 #             train_d(args, gen_net, dis_net, dis_optimizer, train_loader, epoch, writer_dict,fixed_z, lr_schedulers)
-        if epoch % args.t_checkpoint == 0:
+        if epoch % t_checkpoint == 0:
             t += 1
-            print('\n\n\n')
+            print('\n\n')
             save_checkpoint({'gen_state_dict': gen_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
             print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
-            print('\n\n\n')
+            print('\n\n')
         
        # if epoch > 9800 and epoch % (args.t_checkpoint/10) == 0:
 
