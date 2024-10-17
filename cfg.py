@@ -137,8 +137,13 @@ def parse_args():
     parser.add_argument(
         '--checkpoint_number',
         type=int,
-        default=1000,
-        help='interval between saving a checkpoint')
+        default=2,
+        help='number of saved checkpoints checkpoint')
+    parser.add_argument(
+        '--seq_len',
+        type=int,
+        default=30,
+        help='lenght of the time sequence')
     parser.add_argument(
         '--load_path',
         type=str,

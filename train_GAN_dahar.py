@@ -115,9 +115,9 @@ def main_worker(gpu, ngpus_per_node, args):
 
     # import network
     
-    gen_net = Generator(seq_len=30)
+    gen_net = Generator(seq_len=args.seq_len)
     print(gen_net)
-    dis_net = Discriminator(seq_length=30)
+    dis_net = Discriminator(seq_len=args.seq_len)
     print(dis_net)
     if not torch.cuda.is_available():
         print('using CPU, this will be slow')
@@ -199,14 +199,22 @@ def main_worker(gpu, ngpus_per_node, args):
 #     train_loader = data.DataLoader(train_set, batch_size=args.dis_batch_size, num_workers=args.num_workers, shuffle=True)
 #     test_loader = data.DataLoader(test_set, batch_size=args.dis_batch_size, num_workers=args.num_workers, shuffle=True)
     print(args.class_name)
+    print(args.dataset)
     
-    data_set = daghar_load_dataset(class_name=args.class_name)
-    train_set, test_set = train_test_split(data_set, train_size=0.8)
-    train_set, test_set = np.array(train_set), np.array(test_set)
-    
-    train_loader = data.DataLoader(data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
-    test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
-    
+    if args.dataset == 'UniMiB':
+        train_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Train', single_class = True, class_name = args.class_name, augment_times=args.augment_times)
+        train_loader = data.DataLoader(train_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+        test_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Test', single_class = True, class_name = args.class_name)
+        test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+    if args.dataset == 'daghar':
+        data_set = daghar_load_dataset(class_name=args.class_name, seq_len = args.seq_len)
+        train_set, test_set = train_test_split(data_set, train_size=0.8)
+        train_set, test_set = np.array(train_set), np.array(test_set)
+        train_loader = data.DataLoader(data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+        test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+    else:
+        raise NotImplementedError('{} unknown dataset'.format(args.init_type))
+
     print(len(train_loader))
 
     if args.max_iter:

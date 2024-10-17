@@ -309,13 +309,15 @@ class unimib_load_dataset(Dataset):
 class daghar_load_dataset(Dataset):
     def __init__(self, 
         verbose = False,
-        class_name = "run"):
+        class_name = "run",
+        seq_len = 30):
 
-        self.class_name = class_name
+        self.seq_len = seq_len
+
         self.path = '/workspaces/container-workspace/DAHAR_GANs/'
         self.class_name = class_name
 
-        class_data, class_labels = self.load_dataset()
+        class_data, class_labels = self.load_dataset(seq_len=self.seq_len)
         
         self.class_data = torch.tensor(class_data)
         self.class_labels = np.array(class_labels)
@@ -329,14 +331,14 @@ class daghar_load_dataset(Dataset):
         print(f'label shape is {self.class_labels.shape}')
         
 
-    def load_dataset(self, label = 3):
+    def load_dataset(self, label = 3, seq_len = 30):
         my_data = np.genfromtxt(self.path + f'{self.class_name}.csv', delimiter=',')
         class_data = []
         class_label = []
         temp = []
         for i, data in enumerate(my_data):
             temp.append(data)
-            if len(temp)%30 == 0 and i!=0:
+            if len(temp)%seq_len == 0 and i!=0:
                 class_data.append(temp)
                 class_label.append(label)
                 temp = []
