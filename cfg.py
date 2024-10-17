@@ -135,6 +135,16 @@ def parse_args():
         default=100,
         help='interval between each verbose')
     parser.add_argument(
+        '--log_dir',
+        type=str,
+        default='logs',
+        help='Location of the log directory')
+    parser.add_argument(
+        '--path_helper',
+        type=dict,
+        default=None,
+        help='Dictionary containing {prefix, ckpt_path, log_path, sample_path}')
+    parser.add_argument(
         '--checkpoint_number',
         type=int,
         default=2,
@@ -151,7 +161,7 @@ def parse_args():
     parser.add_argument(
         '--class_name',
         type=str,
-        help='The class name to load in UniMiB dataset')
+        help='The class name to load in UniMiB p')
     parser.add_argument(
         '--augment_times',
         type=int,

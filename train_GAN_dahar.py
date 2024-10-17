@@ -267,9 +267,12 @@ def main_worker(gpu, ngpus_per_node, args):
     # create new log dir
         assert args.exp_name
         if args.rank == 0:
-            args.path_helper = set_log_dir('logs', args.exp_name)
+            if args.path_helper == None:
+                args.path_helper = set_log_dir(args.log_dir, args.exp_name)
             logger = create_logger(args.path_helper['log_path'])
+            print('\nlets see')
             writer = SummaryWriter(args.path_helper['log_path'])
+            print('\nsaw?')
     
     if args.rank == 0:
         logger.info(args)
@@ -280,7 +283,7 @@ def main_worker(gpu, ngpus_per_node, args):
     }
 
     # train loop
-    print(f'Epochs between ckechpoint: {t_checkpoint}')
+    print(f'Epochs between checkpoint: {t_checkpoint}')
     t=0
     for epoch in range(int(start_epoch), int(args.max_epoch)):
 #         train_sampler.set_epoch(epoch)
