@@ -56,7 +56,7 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --n_critic 1 \
 --val_freq 20 \
 --print_freq 100 \
---t_checkpoint 1 \
+--checkpoint_number 5 \
 --grow_steps 0 0 \
 --fade_in 0 \
 --patch_size 2 \
@@ -64,8 +64,9 @@ os.system(f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py \
 --ema_warmup 0.1 \
 --ema 0.9999 \
 --diff_aug translation,cutout,color \
---class_name upstairs \
---exp_name Upstairs_5000_D_30")
+--seq_len 30 \
+--class_name run \
+--exp_name run_test")
 
 
 '''
@@ -112,5 +113,6 @@ os.system(f"CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python train_GAN.py \
 --ema 0.9999 \
 --diff_aug translation,cutout,color \
 --class_name Running \
+--seq_len 150 \
 --exp_name Running")
 '''

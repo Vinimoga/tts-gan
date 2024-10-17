@@ -21,22 +21,12 @@ For Each experiment change:
     -exp_name : for the name of the experiment that will be saaved in log, along with the date
 '''
 
-
-'''
---max_iter 5000 \
---checkpoint_number 1 \
---class_name upstairs \
---seq_len 30 \
---exp_name Upstairs_5000_D_30
-
-'''
 max_iter = 5000
-checkpoint_number = 5
-class_name = 'run'
+checkpoint_number = 4
 seq_len = 30
-exp_name = f'{class_name}_{max_iter}_D_{seq_len}'
-                        
-defaut_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -dis_bs 16 \
+log_dir = 'logs/test'
+
+default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -dis_bs 16 \
                 --dist-url 'tcp://localhost:4321' --dist-backend 'nccl' --world-size 1 \
                 --rank {args.rank} --dataset daghar --bottom_width 8 --img_size 32 \
                 --gen_model my_gen --dis_model my_dis --df_dim 384 --d_heads 4 --d_depth 3 \
@@ -47,4 +37,7 @@ defaut_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -d
                 --ema_kimg 500 --ema_warmup 0.1 --ema 0.9999 --diff_aug translation,cutout,color"
 
 for class_name in [s.replace('.csv', '') for s in os.listdir('/workspaces/container-workspace/DAHAR_GANs')]:
-    print(class_name)
+    exp_name = f'{class_name}_{max_iter}_D_{seq_len}'
+    os.system(f'{default_string}' + f' --class_name {class_name}' + f' --seq_len {seq_len}'\
+          + f' --max_iter {max_iter}' + f' --exp_name {exp_name}' + f' --log_dir {log_dir}'\
+          + f' --checkpoint_number {checkpoint_number}')
