@@ -36,8 +36,8 @@ class DagharUniclassEvaluation():
                  models_path: str,
                  class_name: str,
                  seq_len: int,
-                 save_path: str = '/workspaces/container-workspace/tts-gan/Notebooks/Daghar_TTSGAN_data/',
-                 data_path: str = '/workspaces/container-workspace/DAHAR_GANs/',
+                 save_path: str = '../Notebooks/Daghar_TTSGAN_Synthetic_data/',
+                 data_path: str = '../DAGHAR_GANs/',
                  show: bool = True,
                  iter: int = 5000):
     
@@ -49,6 +49,7 @@ class DagharUniclassEvaluation():
         self.show = show
         self.iter = iter
 
+        print(f'class name : {self.class_name}')
         print(f'Data path is located in: {self.data_path}')
         print(f'Models path is located in: {self.models_path}')
         print(f'dataset: Daghar')
@@ -57,7 +58,7 @@ class DagharUniclassEvaluation():
 
         #Extract Original Daghar dataset
         print(f'Original Set:')
-        self.original_set = daghar_load_dataset(class_name=self.class_name)
+        self.original_set = daghar_load_dataset(class_name=self.class_name, path=self.data_path)
 
         print('\n Synthetic Set:')
         self.syn_set = Single_Class_Synthetic_Dataset(path = self.models_path + 'checkpoint',
@@ -227,7 +228,7 @@ class DagharUniclassEvaluation():
         prep_data_final = np.concatenate((prep, prep_hat), axis = 0) #(prep, prep_hat, prep_random)
         #print(prep_data_final.shape)
         # TSNE anlaysis
-        tsne = TSNE(n_components = 2, verbose = 1, perplexity = 40, n_iter = 300)
+        tsne = TSNE(n_components = 2, verbose = 0, perplexity = 40, n_iter = 300)
         tsne_results = tsne.fit_transform(prep_data_final)
         #print(tsne_results.shape)
         # Plotting

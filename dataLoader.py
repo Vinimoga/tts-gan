@@ -309,20 +309,21 @@ class unimib_load_dataset(Dataset):
 class daghar_load_dataset(Dataset):
     def __init__(self, 
         verbose = False,
-        class_name = "run",
-        seq_len = 30):
+        class_name: str = "run",
+        seq_len: int = 30,
+        path: str = 'DAGHAR_GANs/'):
 
         self.seq_len = seq_len
 
-        self.path = 'DAGHAR_GANs/'
+        self.path = path
         self.class_name = class_name
 
         class_data, class_labels = self.load_dataset(seq_len=self.seq_len)
         
-        self.class_data = torch.tensor(class_data)
+        self.class_data = np.array(class_data)
         self.class_labels = np.array(class_labels)
         
-        self.class_data = self.class_data.transpose(-1,1)
+        self.class_data = torch.from_numpy(self.class_data).transpose(-1,1)
         
         self.class_data = np.expand_dims(self.class_data, axis= 2)
 
