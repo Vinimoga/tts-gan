@@ -314,7 +314,7 @@ class daghar_load_dataset(Dataset):
 
         self.seq_len = seq_len
 
-        self.path = '/workspaces/container-workspace/DAHAR_GANs/'
+        self.path = 'DAGHAR_GANs/'
         self.class_name = class_name
 
         class_data, class_labels = self.load_dataset(seq_len=self.seq_len)

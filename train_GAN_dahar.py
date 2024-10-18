@@ -270,9 +270,7 @@ def main_worker(gpu, ngpus_per_node, args):
             if args.path_helper == None:
                 args.path_helper = set_log_dir(args.log_dir, args.exp_name)
             logger = create_logger(args.path_helper['log_path'])
-            print('\nlets see')
             writer = SummaryWriter(args.path_helper['log_path'])
-            print('\nsaw?')
     
     if args.rank == 0:
         logger.info(args)
