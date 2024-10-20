@@ -39,7 +39,8 @@ class DagharUniclassEvaluation():
                  save_path: str = '../Notebooks/Daghar_TTSGAN_Synthetic_data/',
                  data_path: str = '../DAGHAR_GANs/',
                  show: bool = True,
-                 iter: int = 5000):
+                 iter: int = 5000,
+                 n: int = 10):
     
         self.data_path = data_path
         self.models_path = models_path
@@ -64,22 +65,43 @@ class DagharUniclassEvaluation():
         self.syn_set = Single_Class_Synthetic_Dataset(path = self.models_path + 'checkpoint',
                                                       seq_len=self.seq_len)
         
-        #Load DataLoader
-        original_data_loader = data.DataLoader(self.original_set, batch_size=1, num_workers=1, shuffle=True)
-        syn_data_loader = data.DataLoader(self.syn_set, batch_size=1, num_workers=1, shuffle=True)
+        cossine_similaritys = []
+        #evaluate n times to get variance and average
+        for i in range(n):
+            #Load DataLoader
+            original_data_loader = data.DataLoader(self.original_set, batch_size=1, num_workers=1, shuffle=True)
+            syn_data_loader = data.DataLoader(self.syn_set, batch_size=1, num_workers=1, shuffle=True)
 
-        #Extract random vector from dataloader
-        self.syn_data = self.extract_dataloader(syn_data_loader)
-        self.original_data = self.extract_dataloader(original_data_loader)[:len(self.syn_data)]
+            #Extract random vector from dataloader
+            self.syn_data = self.extract_dataloader(syn_data_loader)
+            self.original_data = self.extract_dataloader(original_data_loader)[:len(self.syn_data)]
 
-        #Garant numerical stability and make data into shape (batch, channels, seq_len)
-        self.syn_data = torch.from_numpy(self.syn_data).type(torch.float)
-        self.original_data = torch.from_numpy(self.original_data).type(torch.float)
+            #Garant numerical stability and make data into shape (batch, channels, seq_len)
+            self.syn_data = torch.from_numpy(self.syn_data).type(torch.float)
+            self.original_data = torch.from_numpy(self.original_data).type(torch.float)
 
-        #Get FFT data to evaluate
-        self.syn_fft_data = fft.fft(self.syn_data, dim=-1)
-        self.original_fft_data = fft.fft(self.original_data, dim=-1)
-        
+            #Get FFT data to evaluate
+            self.syn_fft_data = fft.fft(self.syn_data, dim=-1)
+            self.original_fft_data = fft.fft(self.original_data, dim=-1)
+ 
+            self.fe_original_data = self.FeatureExtractor(self.original_data.unsqueeze(dim=2))
+            self.fe_syn_data = self.FeatureExtractor(self.syn_data.unsqueeze(dim=2))
+
+            self.fe_original_fft_data = self.FeatureExtractor(self.original_data.unsqueeze(dim=2))
+            self.fe_syn_fft_data = self.FeatureExtractor(self.syn_fft_data.unsqueeze(dim=2))
+
+            cossine_similaritys.append(self.cossine_similarity(self.fe_original_data, self.fe_syn_data,
+                                                                 self.fe_original_fft_data, self.fe_syn_fft_data))
+        print(cossine_similaritys)
+        #print(len(cossine_similaritys))
+        time_samples = [sample['Time'] for sample in cossine_similaritys]
+        frequency_samples = [sample['Frequency'] for sample in cossine_similaritys]
+
+        self.dictionary = {'Time': f"{np.mean(time_samples):.5f} ± {np.std(time_samples):.5f}",
+                           'Frequency': f"{np.mean(frequency_samples):.5f} ± {np.std(frequency_samples):.5f}" }
+
+        print(self.dictionary)
+    
         #Adjust labels and titles and datasets visulized
         time_domain = [self.original_data, self.syn_data]
         frequency_domain = [self.original_fft_data, self.syn_fft_data]
@@ -97,20 +119,11 @@ class DagharUniclassEvaluation():
         self.TSNE_visualization(self.original_fft_data, self.syn_fft_data, 
                                 title=f'Frequency domain tSNE: {self.class_name} for {self.iter} iter', 
                                 show=self.show)        
-        
-        self.fe_original_data = self.FeatureExtractor(self.original_data.unsqueeze(dim=2))
-        self.fe_syn_data = self.FeatureExtractor(self.syn_data.unsqueeze(dim=2))
 
-        self.fe_original_fft_data = self.FeatureExtractor(self.original_data.unsqueeze(dim=2))
-        self.fe_syn_fft_data = self.FeatureExtractor(self.syn_fft_data.unsqueeze(dim=2))
-        #########3for i in range(10):
-        self.dictionary = self.cossine_similarity(self.fe_original_data, self.fe_syn_data,
-                                                      self.fe_original_fft_data, self.fe_syn_fft_data)
         
-        #self.dataframe[f'{self.class_name}'] = pd.DataFrame(self.dictionary)
-        #pd.set_option('display.precision', 4)
 
-        print(f'{self.class_name} = {self.dictionary}')
+        #print(f'{self.class_name} = {self.dictionary}')
+
 
     
     def extract_dataloader(self, dataloader):
