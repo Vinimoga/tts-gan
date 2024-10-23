@@ -129,6 +129,7 @@ class DagharUniclassEvaluation():
                                 show=self.show)   
         
         if sample_size == 'all':
+            #print(len(self.original_set))
             self.save_samples(sample_size = len(self.original_set))
         else:
             self.save_samples(sample_size=sample_size)
@@ -139,7 +140,7 @@ class DagharUniclassEvaluation():
             real_sig = real_sig.cpu().detach().numpy()
             sig = real_sig.reshape(real_sig.shape[1], real_sig.shape[3])
             data.append(sig)
-    
+
         return np.array(data)
     
     def show_raw_data(self, array, c, title, r = None, n=5):
@@ -294,9 +295,9 @@ class DagharUniclassEvaluation():
         os.makedirs(self.save_path + 'samples', exist_ok=True)
         samples = Single_Class_Synthetic_Dataset(path = self.models_path + 'checkpoint',
                                                  seq_len=self.seq_len, sample_size=sample_size)
-        
-        samples_dataloader = data.DataLoader(self.syn_set, batch_size=1, 
+              
+        samples_dataloader = data.DataLoader(samples, batch_size=1, 
                                               num_workers=self.num_workers, shuffle=True)
         
         samples = self.extract_dataloader(samples_dataloader)
-        np.save(self.save_path + 'samples/',  arr = samples)
+        np.save(self.save_path + 'samples/samples',  arr = samples)
