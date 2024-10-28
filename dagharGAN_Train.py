@@ -3,7 +3,6 @@
 import os
 import sys
 import argparse
-from colorama import init, Fore, Style
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -25,8 +24,9 @@ For Each experiment change:
 
 max_iter = 50000
 checkpoint_number = 4
-seq_len = 30
-log_dir = 'logs/daghar_50000_30_100'
+seq_len = 60
+log_dir = 'logs/daghar_split_dataset_50000_60_100'
+data_path = 'DAGHAR_split_dataset/'
 
 default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -dis_bs 16 \
                 --dist-url 'tcp://localhost:4321' --dist-backend 'nccl' --world-size 1 \
@@ -38,7 +38,7 @@ default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -
                 --n_critic 1 --val_freq 20 --print_freq 100 --grow_steps 0 0 --fade_in 0 --patch_size 2 \
                 --ema_kimg 500 --ema_warmup 0.1 --ema 0.9999 --diff_aug translation,cutout,color"
 
-classes = os.listdir('DAGHAR_GANs')
+classes = os.listdir(data_path)
 
 
 # Exemplo de uso no código
@@ -56,4 +56,4 @@ for class_name in [s.replace('.csv', '') for s in classes]:
 
     os.system(f'{default_string}' + f' --class_name {class_name}' + f' --seq_len {seq_len}'\
           + f' --max_iter {max_iter}' + f' --exp_name {exp_name}' + f' --log_dir {log_dir}'\
-          + f' --checkpoint_number {checkpoint_number}')
+          + f' --checkpoint_number {checkpoint_number}' + f' --data_path {data_path}')
