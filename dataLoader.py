@@ -369,3 +369,71 @@ class daghar_load_dataset(Dataset):
         
     def __getitem__(self, idx):
         return self.class_data[idx], self.class_labels[idx]
+    
+
+class daghar_load_dataset_with_label(Dataset):
+    '''
+    This function loads a daghar dataset, in the molds of the unimid dataset mention above
+    
+    inputs:
+        class_name: used for search in which csv is going to be pulled out of the data path
+        seq_len: size of the time sequence that is going to be made (the entire sample is 60, 
+            but you can have dividers of 60 to have more samples)
+        data_path: data directory path where we are going to pull our data
+        label_path: label directory path where we are goint to pull the labels
+
+    outputs:
+        a dataset that can be used to get itens and know it's lenght
+    '''
+    def __init__(self, 
+        class_name: str = "run",
+        seq_len: int = 30,
+        data_path: str = 'DAGHAR_GANs/',
+        label_path: str = None):
+
+        self.seq_len = seq_len
+
+        self.data_path = data_path
+        self.label_path = label_path
+        self.class_name = class_name
+
+        self.class_data, self.class_labels = self.load_dataset(seq_len=self.seq_len)
+
+        self.class_data = self.class_data.transpose(0, 2, 1)
+
+        self.class_data = np.expand_dims(self.class_data, axis= 2)
+
+        print(f'return single class data and labels, class is {self.class_name}')
+        print(f'data shape is {self.class_data.shape}')
+        print(f'label shape is {self.class_labels.shape}')
+        
+
+    def load_dataset(self, seq_len = 30):
+        '''
+        Search for the data directory and get the entire data, the same for the labels
+        creates a list by appending the label and the data separetely and return them
+        '''
+        my_data = np.genfromtxt(self.data_path, delimiter=',')
+        
+        labels = np.genfromtxt(self.label_path, delimiter=',', dtype=str)
+        labels = np.char.strip(labels, '"').astype(int).reshape(-1, seq_len)
+        labels = np.apply_along_axis(lambda x: np.bincount(x).argmax(), axis=1, arr=labels)
+
+        class_data = []
+        class_label = []
+        temp = []
+        for i, data in enumerate(my_data):
+            temp.append(data)
+            if len(temp)%seq_len == 0 and i!=0:
+                class_data.append(temp)
+                class_label.append(labels[i//seq_len])
+                temp = []
+  
+        return np.array(class_data), labels    
+    
+    def __len__(self):
+            return len(self.class_labels)
+
+        
+    def __getitem__(self, idx):
+        return self.class_data[idx], self.class_labels[idx]
