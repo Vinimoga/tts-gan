@@ -58,6 +58,10 @@ class Synthetic_Dataset(Dataset):
         return self.combined_train_data[idx], self.combined_train_label[idx]
     
 class Single_Class_Synthetic_Dataset(Dataset):
+    '''
+    
+
+    '''
     def __init__(self, 
                  path = './pre-trained-models/RunningGAN_checkpoint',
                  sample_size = 600,

@@ -372,7 +372,8 @@ def gen_plot(gen_net, epoch, class_name):
     buf = io.BytesIO()
     plt.savefig(buf, format='jpeg')
     buf.seek(0)
-    plt.close()
+    #added because creates lots of data and broke the node containing the training (isn't made for big training)
+    plt.close() # originally without this 
     return buf
 
 if __name__ == '__main__':

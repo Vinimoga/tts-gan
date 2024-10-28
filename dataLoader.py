@@ -307,8 +307,20 @@ class unimib_load_dataset(Dataset):
 #########################################################################################################################
 
 class daghar_load_dataset(Dataset):
+    '''
+    This function loads a daghar dataset, in the molds of the unimid dataset mention above
+    
+    inputs:
+        class_name: used for search in which csv is going to be pulled out of the data path
+        seq_len: size of the time sequence that is going to be made (the entire sample is 60, 
+            but you can have dividers of 60 to have more samples)
+        path: data directory path where we are going to pull our data, the actual data path is
+            path + class_name + '.csv' 
+
+    outputs:
+        a dataset that can be used to get itens and know it's lenght
+    '''
     def __init__(self, 
-        verbose = False,
         class_name: str = "run",
         seq_len: int = 30,
         path: str = 'DAGHAR_GANs/'):
@@ -333,6 +345,11 @@ class daghar_load_dataset(Dataset):
         
 
     def load_dataset(self, label = 3, seq_len = 30):
+        '''
+        Search for the data directory + class name.csv and get the entire data
+        creates a list by appending the label (that is fixed [can only be one class])
+        and the data separetely and return them
+        '''
         my_data = np.genfromtxt(self.path + f'{self.class_name}.csv', delimiter=',')
         class_data = []
         class_label = []
