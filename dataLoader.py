@@ -389,7 +389,8 @@ class daghar_load_dataset_with_label(Dataset):
         class_name: str = "run",
         seq_len: int = 30,
         data_path: str = 'DAGHAR_GANs/',
-        label_path: str = None):
+        label_path: str = None,
+        channels: int = 3):
 
         self.seq_len = seq_len
 
@@ -398,6 +399,9 @@ class daghar_load_dataset_with_label(Dataset):
         self.class_name = class_name
 
         self.class_data, self.class_labels = self.load_dataset(seq_len=self.seq_len)
+        #print(self.class_data.shape)
+        self.class_data = self.class_data[:, :, :channels]
+        #print(self.class_data.shape)
 
         self.class_data = self.class_data.transpose(0, 2, 1)
 
