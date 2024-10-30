@@ -25,8 +25,9 @@ For Each experiment change:
 max_iter = 50000
 checkpoint_number = 4
 seq_len = 60
-log_dir = 'logs/daghar_split_dataset_50000_60_100'
-data_path = 'DAGHAR_split_dataset/'
+channels = 6
+log_dir = 'logs/daghar_split_dataset_50000_6axis_60_100'
+data_path = 'DAGHAR_split_25_10/train/data/'
 
 default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -dis_bs 16 \
                 --dist-url 'tcp://localhost:4321' --dist-backend 'nccl' --world-size 1 \
@@ -56,4 +57,5 @@ for class_name in [s.replace('.csv', '') for s in classes]:
 
     os.system(f'{default_string}' + f' --class_name {class_name}' + f' --seq_len {seq_len}'\
           + f' --max_iter {max_iter}' + f' --exp_name {exp_name}' + f' --log_dir {log_dir}'\
-          + f' --checkpoint_number {checkpoint_number}' + f' --data_path {data_path}')
+          + f' --checkpoint_number {checkpoint_number}' + f' --data_path {data_path}'\
+          + f' --channels {channels}')
