@@ -18,6 +18,8 @@ from LoadSyntheticRunningJumping import *
 
 from dataLoader import *
 
+from GANModels import Generator, Discriminator, Encoder
+
 import torch.fft as fft
 
 from sklearn.manifold import TSNE
@@ -38,19 +40,23 @@ class DagharUniclassEvaluation():
                  seq_len: int,
                  save_path: str = '../Notebooks/Daghar_TTSGAN_Synthetic_Data/',
                  data_path: str = '../DAGHAR_GANs/',
+                 label_path: str = '../DAGHAR_GANs/',
                  show: bool = True,
                  iter: int = 5000,
                  n: int = 10,
                  num_workers: int = 6,
+                 channels: int = 3,
                  sample_size=600):
     
         self.data_path = data_path
+        self.label_path = label_path
         self.models_path = models_path
         self.class_name = class_name
         self.save_path = save_path
         self.seq_len = seq_len
         self.show = show
         self.iter = iter
+        self.channels = channels
         self.num_workers = num_workers
         
         self.save_path = self.save_path + f'{class_name}_{seq_len}_{self.iter}/'
@@ -65,11 +71,18 @@ class DagharUniclassEvaluation():
 
         #Extract Original Daghar dataset
         print(f'Original Set:')
-        self.original_set = daghar_load_dataset(class_name=self.class_name, path=self.data_path)
+        self.original_set = daghar_load_dataset_with_label(class_name=self.class_name, data_path=self.data_path, seq_len=self.seq_len,
+                                                            label_path=self.label_path, channels=self.channels)
+
+        if sample_size == 'all':
+            self.sample_size = len(self.original_set)
+        else:
+            self.sample_size = sample_size
 
         print('\n Synthetic Set:')
         self.syn_set = Single_Class_Synthetic_Dataset(path = self.models_path + 'checkpoint',
-                                                      seq_len=self.seq_len)
+                                                      seq_len=self.seq_len, channels=self.channels,
+                                                      sample_size = self.sample_size)
         
         cossine_similaritys = []
         #evaluate n times to get variance and average
@@ -82,7 +95,8 @@ class DagharUniclassEvaluation():
 
             #Extract random vector from dataloader
             self.syn_data = self.extract_dataloader(syn_data_loader)
-            self.original_data = self.extract_dataloader(original_data_loader)[:len(self.syn_data)]
+            self.original_data, self.original_label = self.extract_dataloader(original_data_loader, l=True)[:len(self.syn_data)]
+
 
             #Garant numerical stability and make data into shape (batch, channels, seq_len)
             self.syn_data = torch.from_numpy(self.syn_data).type(torch.float)
@@ -111,7 +125,15 @@ class DagharUniclassEvaluation():
         print(self.dictionary)
 
         #Color for the three axis in Raw Data Visualization
-        c= ['steelblue', 'orangered', 'green']
+        c =  [
+            "#FF5733",  # Vermelho
+            "#337BFF",  # Azul
+            "#33FF57",  # Verde
+            "#FFD133",  # Amarelo
+            "#9B33FF",  # Roxo
+            "#33FFF6"   # Ciano
+             ]
+
         
         print(f'saving files in {self.save_path}')
         if self.show:
@@ -134,13 +156,16 @@ class DagharUniclassEvaluation():
         else:
             self.save_samples(sample_size=sample_size)
 
-    def extract_dataloader(self, dataloader):
+    def extract_dataloader(self, dataloader, l = False):
         data = []
+        label_data = []
         for i, (real_sig, label) in enumerate(dataloader):
             real_sig = real_sig.cpu().detach().numpy()
             sig = real_sig.reshape(real_sig.shape[1], real_sig.shape[3])
+            label_data.append(label)
             data.append(sig)
-
+        if l:
+            return np.array(data), np.array(label_data)
         return np.array(data)
     
     def show_raw_data(self, array, c, title, r = None, n=5):
@@ -150,18 +175,23 @@ class DagharUniclassEvaluation():
         r must be an integer between 0 and (len(real) - n)
         '''
         label = ['real', 'synth']
+        activities = ['sit', 'stand', 'walk', 'upstairs', 'downstairs','run']
         temp = array
         if not r:
+            #print(f'r can be any number from {0} to {len(temp[0])}')
             r = torch.randint(0,len(temp[0]) - n, size=(1,)).item()
-
+        #print(f'n: {n}, r: {r}')
         fig, axs = plt.subplots(len(temp), n , figsize=(35,5))
         fig.suptitle(title, fontsize=30)
         #fig.suptitle('Running', fontsize=30)
         fig.subplots_adjust(wspace=0.1, hspace=0.4)
         for j in range(len(temp)):
             for k in range(n):
-                for l in range(3):
+                for l in range(len(temp[0][0])):
+                    #print(f'j: {j}, k: {k}, l: {l}')
                     axs[j][k].plot(temp[j][r+k][l][:], c=c[l])
+                if j == 0:
+                    axs[j][k].set_xlabel(activities[self.original_label[r+k].item()], fontsize=20)
         axs[0][0].set_ylabel(label[0], fontsize=20)
         axs[1][0].set_ylabel(label[1], fontsize=20)
 
@@ -301,3 +331,133 @@ class DagharUniclassEvaluation():
         
         samples = self.extract_dataloader(samples_dataloader)
         np.save(self.save_path + 'samples/samples',  arr = samples)
+
+
+class EncoderEvaluation():
+    '''
+    
+    
+    
+    
+    
+    '''
+    def __init__(self,
+                 models_path: str,
+                 class_name: str,
+                 seq_len: int,
+                 channels: int = 3,
+                 save_path = '../Notebooks/Encoder_view/',
+                 data_path: str = '../DAGHAR_GANs/',
+                 label_path: str = None,
+                 show: bool = True):
+    
+        self.data_path = data_path
+        self.label_path = label_path
+        self.models_path = models_path
+        self.class_name = class_name
+        self.channels = channels
+        self.save_path = save_path
+        self.seq_len = seq_len
+        self.show = show
+        
+        print(f'class name : {self.class_name}')
+        print(f'Data path is located in: {self.data_path}')
+        print(f'Label path is located in: {self.label_path}')
+        print(f'Models path is located in: {self.models_path}')
+        print(f'dataset: Daghar')
+
+        print(f' \n Starting Encoder Evaluation')
+
+        #Extract Original Daghar dataset
+        print(f'Original Set:')
+        self.original_set = daghar_load_dataset_with_label(class_name=self.class_name, seq_len=self.seq_len,
+                                                           data_path=self.data_path, label_path = self.label_path,
+                                                           channels=self.channels)
+        
+        #get labels
+        labels = self.original_set[:][1]
+        #print(labels)
+
+        #get encoder
+        self.encoder = self.encoder_separation()
+        
+        #Transform samples to pass through the encoder
+        samples = torch.from_numpy(self.original_set[:][0]).float().to('cuda')
+        #print(f'samples shape: {samples.shape}, Labels shape:{labels.shape}')
+
+        forward = self.encoder(samples).cpu().detach().numpy()
+        print(f'forward shape: {forward.shape}')
+
+        self.tsne = self.TSNE_visualization(forward, labels, 
+                                title=f'tSNE: {self.class_name}',
+                                show=self.show, save_path = self.save_path)
+
+    def encoder_separation(self):
+        encoder = Encoder(in_channels = self.channels, seq_len = self.seq_len)
+        ckp = torch.load(self.models_path, map_location=torch.device("cpu")) 
+        keys_to_remove = list(ckp['dis_state_dict'].keys())[-4:] 
+
+        for key in keys_to_remove:
+            del ckp['dis_state_dict'][key]
+        
+        encoder.load_state_dict(ckp['dis_state_dict'])
+
+        return encoder.cuda()
+
+    def TSNE_visualization(self, data, labels, title='t-SNE plot', show=True, save_path=''):
+        '''
+
+        Espera-se que os dados originais estejam na forma (batch, channels, timeframe), por exemplo, (2784, 3, 50)
+        
+        '''
+        colors = [
+            "#FF5733",  # Vermelho
+            "#337BFF",  # Azul
+            "#33FF57",  # Verde
+            "#FFD133",  # Amarelo
+            "#9B33FF",  # Roxo
+            "#33FFF6"   # Ciano
+        ]
+        actions = ['sit', 'stand', 'walk', 'upstairs', 'downstairs', 'run']
+
+        # Garantir que os dados são numpy array e embaralhar com labels
+        data = np.asarray(data)
+        labels = np.asarray(labels)
+        l = len(data)
+        idx = np.random.permutation(l)
+        data, labels = data[idx], labels[idx]
+
+        # Pré-processamento: média ao longo da dimensão dos canais (dim=1)
+        # Para cada batch, reduzimos para uma representação média de forma (2784, 50)
+        prep = np.mean(data, axis=1)
+        print("Shape após a média por canal:", prep.shape)
+
+        # Análise TSNE
+        tsne = TSNE(n_components=2, verbose=0, perplexity=40, n_iter=300)
+        tsne_results = tsne.fit_transform(prep)
+        print("Shape do resultado TSNE:", tsne_results.shape)
+
+        # Plotagem
+        if not show:
+            return tsne_results
+
+        f, ax = plt.subplots(1, figsize=(12,6))
+
+        scatter = plt.scatter(
+            tsne_results[:, 0], tsne_results[:, 1], 
+            c=[colors[label] for label in labels], alpha=0.6
+        )
+        # Criar uma legenda customizada para as classes
+        handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=colors[i], markersize=10) for i in range(len(actions))]
+        ax.legend(handles, actions, title="Actions")
+
+        ax.set_title(title)
+        ax.set_xlabel('x-tsne')
+        ax.set_ylabel('y-tsne')
+        if save_path:
+            f.savefig(save_path + title + '.png')
+
+        return tsne_results
+
+
+    
