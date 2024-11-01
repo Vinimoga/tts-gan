@@ -25,9 +25,13 @@ For Each experiment change:
 max_iter = 50000
 checkpoint_number = 4
 seq_len = 60
-channels = 6
-log_dir = 'logs/daghar_split_dataset_50000_6axis_60_100'
-data_path = 'DAGHAR_split_25_10/train/data/'
+channels = 3
+log_dir = 'logs/daghar_all_50000_3axis_60_100'
+path = 'DAGHAR_split_25_10_all/train/'
+data_path = path + 'data/'
+classes = os.listdir(data_path)
+label_path = [path + 'label/' + s.replace('DAGHAR', 'Label') for s in classes]
+
 
 default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -dis_bs 16 \
                 --dist-url 'tcp://localhost:4321' --dist-backend 'nccl' --world-size 1 \
@@ -39,7 +43,7 @@ default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -
                 --n_critic 1 --val_freq 20 --print_freq 100 --grow_steps 0 0 --fade_in 0 --patch_size 2 \
                 --ema_kimg 500 --ema_warmup 0.1 --ema 0.9999 --diff_aug translation,cutout,color"
 
-classes = os.listdir(data_path)
+
 
 
 # Exemplo de uso no código
@@ -48,14 +52,15 @@ print(f'Total of classes being trained: {len(classes)}\n', flush=True)
 print(classes, flush=True)
 print('----------------------------------------------------------------------------------------------------', flush=True)
 
-for class_name in [s.replace('.csv', '') for s in classes]:
-    exp_name = f'{class_name}_{max_iter}_D_{seq_len}'
+for i, class_name in enumerate([s for s in classes]):
+    c = class_name.replace('.csv', '')
+    exp_name = f'{c}_{max_iter}_D_{seq_len}_{channels}axis'
     print('\n----------------------------------------------------------------------------------------------------', flush=True)
     print('\n Starting individual training', flush=True)
-    print(f'{class_name} training', flush=True)
+    print(f'{c} training', flush=True)
     print('----------------------------------------------------------------------------------------------------', flush=True)
 
-    os.system(f'{default_string}' + f' --class_name {class_name}' + f' --seq_len {seq_len}'\
+    os.system(f'{default_string}' + f' --class_name {c}' + f' --seq_len {seq_len}'\
           + f' --max_iter {max_iter}' + f' --exp_name {exp_name}' + f' --log_dir {log_dir}'\
-          + f' --checkpoint_number {checkpoint_number}' + f' --data_path {data_path}'\
-          + f' --channels {channels}')
+          + f' --checkpoint_number {checkpoint_number}' + f' --data_path {data_path + classes[i]}'\
+          + f' --channels {channels}' + f' --label_path {label_path[i]}')
