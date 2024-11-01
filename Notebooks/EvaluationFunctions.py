@@ -359,6 +359,8 @@ class EncoderEvaluation():
         self.save_path = save_path
         self.seq_len = seq_len
         self.show = show
+
+        os.makedirs(self.save_path,exist_ok=True)
         
         print(f'class name : {self.class_name}')
         print(f'Data path is located in: {self.data_path}')
