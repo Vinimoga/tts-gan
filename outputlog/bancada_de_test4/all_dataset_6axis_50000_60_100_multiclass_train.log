@@ -1,0 +1,840 @@
+
+ Starting training
+Total of classes being trained: 1
+
+['UCI_DAGHAR_Multiclass.csv']
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+ Starting individual training
+UCI_DAGHAR_Multiclass training
+----------------------------------------------------------------------------------------------------
+Generator(
+  (l1): Linear(in_features=100, out_features=600, bias=True)
+  (blocks): Gen_TransformerEncoder(
+    (0): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (1): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (2): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+  )
+  (deconv): Sequential(
+    (0): Conv2d(10, 6, kernel_size=(1, 1), stride=(1, 1))
+  )
+)
+Discriminator(
+  (0): PatchEmbedding_Linear(
+    (projection): Sequential(
+      (0): Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=1, s2=15)
+      (1): Linear(in_features=90, out_features=50, bias=True)
+    )
+  )
+  (1): Dis_TransformerEncoder(
+    (0): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (1): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (2): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+  )
+  (2): ClassificationHead(
+    (clshead): Sequential(
+      (0): Reduce('b n e -> b e', 'mean')
+      (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+      (2): Linear(in_features=50, out_features=1, bias=True)
+    )
+  )
+)
+DataParallel(
+  (module): Discriminator(
+    (0): PatchEmbedding_Linear(
+      (projection): Sequential(
+        (0): Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=1, s2=15)
+        (1): Linear(in_features=90, out_features=50, bias=True)
+      )
+    )
+    (1): Dis_TransformerEncoder(
+      (0): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+      (1): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+      (2): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+    )
+    (2): ClassificationHead(
+      (clshead): Sequential(
+        (0): Reduce('b n e -> b e', 'mean')
+        (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+        (2): Linear(in_features=50, out_features=1, bias=True)
+      )
+    )
+  )
+)
+UCI_DAGHAR_Multiclass
+daghar
+return single class data and labels, class is UCI_DAGHAR_Multiclass
+data shape is (36788, 6, 1, 60)
+label shape is (36788,)
+2300
+Epochs between checkpoint: 6
+
+
+
+Saving checkpoint 1 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+
+
+
+[Epoch 0/22] [Batch 0/2300] [D loss: 2.050287] [G loss: 0.614858] [ema: 0.000000] 
+[Epoch 0/22] [Batch 100/2300] [D loss: 0.449725] [G loss: 0.157625] [ema: 0.933033] 
+[Epoch 0/22] [Batch 200/2300] [D loss: 0.508764] [G loss: 0.186840] [ema: 0.965936] 
+[Epoch 0/22] [Batch 300/2300] [D loss: 0.510328] [G loss: 0.160112] [ema: 0.977160] 
+[Epoch 0/22] [Batch 400/2300] [D loss: 0.519461] [G loss: 0.130978] [ema: 0.982821] 
+[Epoch 0/22] [Batch 500/2300] [D loss: 0.549101] [G loss: 0.172424] [ema: 0.986233] 
+[Epoch 0/22] [Batch 600/2300] [D loss: 0.426616] [G loss: 0.159634] [ema: 0.988514] 
+[Epoch 0/22] [Batch 700/2300] [D loss: 0.424991] [G loss: 0.150416] [ema: 0.990147] 
+[Epoch 0/22] [Batch 800/2300] [D loss: 0.457013] [G loss: 0.154592] [ema: 0.991373] 
+[Epoch 0/22] [Batch 900/2300] [D loss: 0.375618] [G loss: 0.175270] [ema: 0.992328] 
+[Epoch 0/22] [Batch 1000/2300] [D loss: 0.476070] [G loss: 0.128207] [ema: 0.993092] 
+[Epoch 0/22] [Batch 1100/2300] [D loss: 0.392024] [G loss: 0.176671] [ema: 0.993718] 
+[Epoch 0/22] [Batch 1200/2300] [D loss: 0.487419] [G loss: 0.139316] [ema: 0.994240] 
+[Epoch 0/22] [Batch 1300/2300] [D loss: 0.478691] [G loss: 0.131491] [ema: 0.994682] 
+[Epoch 0/22] [Batch 1400/2300] [D loss: 0.504347] [G loss: 0.144728] [ema: 0.995061] 
+[Epoch 0/22] [Batch 1500/2300] [D loss: 0.441530] [G loss: 0.178970] [ema: 0.995390] 
+[Epoch 0/22] [Batch 1600/2300] [D loss: 0.421127] [G loss: 0.166580] [ema: 0.995677] 
+[Epoch 0/22] [Batch 1700/2300] [D loss: 0.452206] [G loss: 0.140890] [ema: 0.995931] 
+[Epoch 0/22] [Batch 1800/2300] [D loss: 0.436252] [G loss: 0.174104] [ema: 0.996157] 
+[Epoch 0/22] [Batch 1900/2300] [D loss: 0.491750] [G loss: 0.173629] [ema: 0.996359] 
+[Epoch 0/22] [Batch 2000/2300] [D loss: 0.415139] [G loss: 0.180941] [ema: 0.996540] 
+[Epoch 0/22] [Batch 2100/2300] [D loss: 0.452300] [G loss: 0.157675] [ema: 0.996705] 
+[Epoch 0/22] [Batch 2200/2300] [D loss: 0.374291] [G loss: 0.171358] [ema: 0.996854] 
+[Epoch 1/22] [Batch 0/2300] [D loss: 0.460576] [G loss: 0.167030] [ema: 0.996991] 
+[Epoch 1/22] [Batch 100/2300] [D loss: 0.474069] [G loss: 0.152078] [ema: 0.997116] 
+[Epoch 1/22] [Batch 200/2300] [D loss: 0.404992] [G loss: 0.201799] [ema: 0.997231] 
+[Epoch 1/22] [Batch 300/2300] [D loss: 0.417687] [G loss: 0.174236] [ema: 0.997338] 
+[Epoch 1/22] [Batch 400/2300] [D loss: 0.403960] [G loss: 0.195100] [ema: 0.997436] 
+[Epoch 1/22] [Batch 500/2300] [D loss: 0.418007] [G loss: 0.177846] [ema: 0.997528] 
+[Epoch 1/22] [Batch 600/2300] [D loss: 0.351192] [G loss: 0.217783] [ema: 0.997613] 
+[Epoch 1/22] [Batch 700/2300] [D loss: 0.383624] [G loss: 0.156061] [ema: 0.997692] 
+[Epoch 1/22] [Batch 800/2300] [D loss: 0.417935] [G loss: 0.131952] [ema: 0.997767] 
+[Epoch 1/22] [Batch 900/2300] [D loss: 0.366354] [G loss: 0.202103] [ema: 0.997836] 
+[Epoch 1/22] [Batch 1000/2300] [D loss: 0.386775] [G loss: 0.174197] [ema: 0.997902] 
+[Epoch 1/22] [Batch 1100/2300] [D loss: 0.381949] [G loss: 0.174162] [ema: 0.997963] 
+[Epoch 1/22] [Batch 1200/2300] [D loss: 0.361279] [G loss: 0.210461] [ema: 0.998022] 
+[Epoch 1/22] [Batch 1300/2300] [D loss: 0.392158] [G loss: 0.192177] [ema: 0.998076] 
+[Epoch 1/22] [Batch 1400/2300] [D loss: 0.379843] [G loss: 0.159781] [ema: 0.998128] 
+[Epoch 1/22] [Batch 1500/2300] [D loss: 0.327179] [G loss: 0.169969] [ema: 0.998178] 
+[Epoch 1/22] [Batch 1600/2300] [D loss: 0.415309] [G loss: 0.157659] [ema: 0.998224] 
+[Epoch 1/22] [Batch 1700/2300] [D loss: 0.404723] [G loss: 0.174263] [ema: 0.998269] 
+[Epoch 1/22] [Batch 1800/2300] [D loss: 0.356604] [G loss: 0.196498] [ema: 0.998311] 
+[Epoch 1/22] [Batch 1900/2300] [D loss: 0.380400] [G loss: 0.168988] [ema: 0.998351] 
+[Epoch 1/22] [Batch 2000/2300] [D loss: 0.419688] [G loss: 0.171504] [ema: 0.998389] 
+[Epoch 1/22] [Batch 2100/2300] [D loss: 0.438248] [G loss: 0.199616] [ema: 0.998426] 
+[Epoch 1/22] [Batch 2200/2300] [D loss: 0.403255] [G loss: 0.197674] [ema: 0.998461] 
+[Epoch 2/22] [Batch 0/2300] [D loss: 0.398595] [G loss: 0.165122] [ema: 0.998494] 
+[Epoch 2/22] [Batch 100/2300] [D loss: 0.380521] [G loss: 0.174182] [ema: 0.998526] 
+[Epoch 2/22] [Batch 200/2300] [D loss: 0.407522] [G loss: 0.160740] [ema: 0.998557] 
+[Epoch 2/22] [Batch 300/2300] [D loss: 0.422676] [G loss: 0.186822] [ema: 0.998586] 
+[Epoch 2/22] [Batch 400/2300] [D loss: 0.409009] [G loss: 0.168870] [ema: 0.998615] 
+[Epoch 2/22] [Batch 500/2300] [D loss: 0.429141] [G loss: 0.156118] [ema: 0.998642] 
+[Epoch 2/22] [Batch 600/2300] [D loss: 0.407626] [G loss: 0.180909] [ema: 0.998668] 
+[Epoch 2/22] [Batch 700/2300] [D loss: 0.379307] [G loss: 0.184715] [ema: 0.998693] 
+[Epoch 2/22] [Batch 800/2300] [D loss: 0.410956] [G loss: 0.163557] [ema: 0.998717] 
+[Epoch 2/22] [Batch 900/2300] [D loss: 0.385364] [G loss: 0.204008] [ema: 0.998741] 
+[Epoch 2/22] [Batch 1000/2300] [D loss: 0.395221] [G loss: 0.173173] [ema: 0.998763] 
+[Epoch 2/22] [Batch 1100/2300] [D loss: 0.414424] [G loss: 0.181825] [ema: 0.998785] 
+[Epoch 2/22] [Batch 1200/2300] [D loss: 0.417427] [G loss: 0.156492] [ema: 0.998806] 
+[Epoch 2/22] [Batch 1300/2300] [D loss: 0.393698] [G loss: 0.185393] [ema: 0.998826] 
+[Epoch 2/22] [Batch 1400/2300] [D loss: 0.430054] [G loss: 0.168075] [ema: 0.998845] 
+[Epoch 2/22] [Batch 1500/2300] [D loss: 0.391494] [G loss: 0.181111] [ema: 0.998864] 
+[Epoch 2/22] [Batch 1600/2300] [D loss: 0.429308] [G loss: 0.173528] [ema: 0.998883] 
+[Epoch 2/22] [Batch 1700/2300] [D loss: 0.386211] [G loss: 0.177683] [ema: 0.998900] 
+[Epoch 2/22] [Batch 1800/2300] [D loss: 0.395758] [G loss: 0.192668] [ema: 0.998918] 
+[Epoch 2/22] [Batch 1900/2300] [D loss: 0.420825] [G loss: 0.169904] [ema: 0.998934] 
+[Epoch 2/22] [Batch 2000/2300] [D loss: 0.364503] [G loss: 0.178172] [ema: 0.998950] 
+[Epoch 2/22] [Batch 2100/2300] [D loss: 0.378650] [G loss: 0.187943] [ema: 0.998966] 
+[Epoch 2/22] [Batch 2200/2300] [D loss: 0.375097] [G loss: 0.183866] [ema: 0.998981] 
+[Epoch 3/22] [Batch 0/2300] [D loss: 0.405129] [G loss: 0.179424] [ema: 0.998996] 
+[Epoch 3/22] [Batch 100/2300] [D loss: 0.393854] [G loss: 0.174690] [ema: 0.999010] 
+[Epoch 3/22] [Batch 200/2300] [D loss: 0.388398] [G loss: 0.187045] [ema: 0.999024] 
+[Epoch 3/22] [Batch 300/2300] [D loss: 0.401962] [G loss: 0.192671] [ema: 0.999038] 
+[Epoch 3/22] [Batch 400/2300] [D loss: 0.399614] [G loss: 0.186944] [ema: 0.999051] 
+[Epoch 3/22] [Batch 500/2300] [D loss: 0.369526] [G loss: 0.174296] [ema: 0.999064] 
+[Epoch 3/22] [Batch 600/2300] [D loss: 0.413357] [G loss: 0.180589] [ema: 0.999076] 
+[Epoch 3/22] [Batch 700/2300] [D loss: 0.359773] [G loss: 0.167125] [ema: 0.999088] 
+[Epoch 3/22] [Batch 800/2300] [D loss: 0.395989] [G loss: 0.181874] [ema: 0.999100] 
+[Epoch 3/22] [Batch 900/2300] [D loss: 0.386343] [G loss: 0.178813] [ema: 0.999112] 
+[Epoch 3/22] [Batch 1000/2300] [D loss: 0.370387] [G loss: 0.192799] [ema: 0.999123] 
+[Epoch 3/22] [Batch 1100/2300] [D loss: 0.421096] [G loss: 0.183895] [ema: 0.999134] 
+[Epoch 3/22] [Batch 1200/2300] [D loss: 0.406106] [G loss: 0.152769] [ema: 0.999145] 
+[Epoch 3/22] [Batch 1300/2300] [D loss: 0.425845] [G loss: 0.166278] [ema: 0.999155] 
+[Epoch 3/22] [Batch 1400/2300] [D loss: 0.425894] [G loss: 0.164847] [ema: 0.999165] 
+[Epoch 3/22] [Batch 1500/2300] [D loss: 0.371827] [G loss: 0.173125] [ema: 0.999175] 
+[Epoch 3/22] [Batch 1600/2300] [D loss: 0.360206] [G loss: 0.180189] [ema: 0.999185] 
+[Epoch 3/22] [Batch 1700/2300] [D loss: 0.375995] [G loss: 0.185806] [ema: 0.999194] 
+[Epoch 3/22] [Batch 1800/2300] [D loss: 0.421765] [G loss: 0.171333] [ema: 0.999204] 
+[Epoch 3/22] [Batch 1900/2300] [D loss: 0.419266] [G loss: 0.183625] [ema: 0.999213] 
+[Epoch 3/22] [Batch 2000/2300] [D loss: 0.365170] [G loss: 0.180540] [ema: 0.999221] 
+[Epoch 3/22] [Batch 2100/2300] [D loss: 0.367123] [G loss: 0.178161] [ema: 0.999230] 
+[Epoch 3/22] [Batch 2200/2300] [D loss: 0.419740] [G loss: 0.176501] [ema: 0.999239] 
+[Epoch 4/22] [Batch 0/2300] [D loss: 0.422448] [G loss: 0.181843] [ema: 0.999247] 
+[Epoch 4/22] [Batch 100/2300] [D loss: 0.392661] [G loss: 0.183017] [ema: 0.999255] 
+[Epoch 4/22] [Batch 200/2300] [D loss: 0.415324] [G loss: 0.180010] [ema: 0.999263] 
+[Epoch 4/22] [Batch 300/2300] [D loss: 0.398632] [G loss: 0.180913] [ema: 0.999271] 
+[Epoch 4/22] [Batch 400/2300] [D loss: 0.368672] [G loss: 0.184818] [ema: 0.999278] 
+[Epoch 4/22] [Batch 500/2300] [D loss: 0.393411] [G loss: 0.179690] [ema: 0.999286] 
+[Epoch 4/22] [Batch 600/2300] [D loss: 0.396970] [G loss: 0.180053] [ema: 0.999293] 
+[Epoch 4/22] [Batch 700/2300] [D loss: 0.395622] [G loss: 0.181235] [ema: 0.999300] 
+[Epoch 4/22] [Batch 800/2300] [D loss: 0.373466] [G loss: 0.189119] [ema: 0.999307] 
+[Epoch 4/22] [Batch 900/2300] [D loss: 0.393608] [G loss: 0.193199] [ema: 0.999314] 
+[Epoch 4/22] [Batch 1000/2300] [D loss: 0.413858] [G loss: 0.188022] [ema: 0.999321] 
+[Epoch 4/22] [Batch 1100/2300] [D loss: 0.387204] [G loss: 0.204933] [ema: 0.999327] 
+[Epoch 4/22] [Batch 1200/2300] [D loss: 0.354300] [G loss: 0.190144] [ema: 0.999334] 
+[Epoch 4/22] [Batch 1300/2300] [D loss: 0.447577] [G loss: 0.191247] [ema: 0.999340] 
+[Epoch 4/22] [Batch 1400/2300] [D loss: 0.431140] [G loss: 0.179348] [ema: 0.999346] 
+[Epoch 4/22] [Batch 1500/2300] [D loss: 0.439779] [G loss: 0.186926] [ema: 0.999352] 
+[Epoch 4/22] [Batch 1600/2300] [D loss: 0.372888] [G loss: 0.186764] [ema: 0.999358] 
+[Epoch 4/22] [Batch 1700/2300] [D loss: 0.401466] [G loss: 0.180948] [ema: 0.999364] 
+[Epoch 4/22] [Batch 1800/2300] [D loss: 0.396612] [G loss: 0.158569] [ema: 0.999370] 
+[Epoch 4/22] [Batch 1900/2300] [D loss: 0.420234] [G loss: 0.182020] [ema: 0.999376] 
+[Epoch 4/22] [Batch 2000/2300] [D loss: 0.437027] [G loss: 0.161731] [ema: 0.999381] 
+[Epoch 4/22] [Batch 2100/2300] [D loss: 0.386484] [G loss: 0.181305] [ema: 0.999387] 
+[Epoch 4/22] [Batch 2200/2300] [D loss: 0.413307] [G loss: 0.153576] [ema: 0.999392] 
+[Epoch 5/22] [Batch 0/2300] [D loss: 0.379073] [G loss: 0.189587] [ema: 0.999397] 
+[Epoch 5/22] [Batch 100/2300] [D loss: 0.314114] [G loss: 0.198475] [ema: 0.999403] 
+[Epoch 5/22] [Batch 200/2300] [D loss: 0.348473] [G loss: 0.183959] [ema: 0.999408] 
+[Epoch 5/22] [Batch 300/2300] [D loss: 0.374376] [G loss: 0.193402] [ema: 0.999413] 
+[Epoch 5/22] [Batch 400/2300] [D loss: 0.411881] [G loss: 0.178759] [ema: 0.999418] 
+[Epoch 5/22] [Batch 500/2300] [D loss: 0.433534] [G loss: 0.172014] [ema: 0.999423] 
+[Epoch 5/22] [Batch 600/2300] [D loss: 0.360114] [G loss: 0.193946] [ema: 0.999427] 
+[Epoch 5/22] [Batch 700/2300] [D loss: 0.396193] [G loss: 0.185653] [ema: 0.999432] 
+[Epoch 5/22] [Batch 800/2300] [D loss: 0.379436] [G loss: 0.197178] [ema: 0.999437] 
+[Epoch 5/22] [Batch 900/2300] [D loss: 0.355862] [G loss: 0.184331] [ema: 0.999441] 
+[Epoch 5/22] [Batch 1000/2300] [D loss: 0.399250] [G loss: 0.168052] [ema: 0.999446] 
+[Epoch 5/22] [Batch 1100/2300] [D loss: 0.396338] [G loss: 0.176930] [ema: 0.999450] 
+[Epoch 5/22] [Batch 1200/2300] [D loss: 0.387010] [G loss: 0.176837] [ema: 0.999454] 
+[Epoch 5/22] [Batch 1300/2300] [D loss: 0.428579] [G loss: 0.174787] [ema: 0.999459] 
+[Epoch 5/22] [Batch 1400/2300] [D loss: 0.421869] [G loss: 0.181998] [ema: 0.999463] 
+[Epoch 5/22] [Batch 1500/2300] [D loss: 0.401452] [G loss: 0.195628] [ema: 0.999467] 
+[Epoch 5/22] [Batch 1600/2300] [D loss: 0.370734] [G loss: 0.170794] [ema: 0.999471] 
+[Epoch 5/22] [Batch 1700/2300] [D loss: 0.380141] [G loss: 0.178915] [ema: 0.999475] 
+[Epoch 5/22] [Batch 1800/2300] [D loss: 0.350915] [G loss: 0.192166] [ema: 0.999479] 
+[Epoch 5/22] [Batch 1900/2300] [D loss: 0.378287] [G loss: 0.167989] [ema: 0.999483] 
+[Epoch 5/22] [Batch 2000/2300] [D loss: 0.426725] [G loss: 0.162017] [ema: 0.999487] 
+[Epoch 5/22] [Batch 2100/2300] [D loss: 0.403117] [G loss: 0.182778] [ema: 0.999490] 
+[Epoch 5/22] [Batch 2200/2300] [D loss: 0.387714] [G loss: 0.185242] [ema: 0.999494] 
+
+
+
+Saving checkpoint 2 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+
+
+
+[Epoch 6/22] [Batch 0/2300] [D loss: 0.429953] [G loss: 0.173728] [ema: 0.999498] 
+[Epoch 6/22] [Batch 100/2300] [D loss: 0.377501] [G loss: 0.220340] [ema: 0.999501] 
+[Epoch 6/22] [Batch 200/2300] [D loss: 0.396999] [G loss: 0.195979] [ema: 0.999505] 
+[Epoch 6/22] [Batch 300/2300] [D loss: 0.410335] [G loss: 0.183266] [ema: 0.999509] 
+[Epoch 6/22] [Batch 400/2300] [D loss: 0.437783] [G loss: 0.174358] [ema: 0.999512] 
+[Epoch 6/22] [Batch 500/2300] [D loss: 0.386866] [G loss: 0.197660] [ema: 0.999515] 
+[Epoch 6/22] [Batch 600/2300] [D loss: 0.388941] [G loss: 0.176667] [ema: 0.999519] 
+[Epoch 6/22] [Batch 700/2300] [D loss: 0.383092] [G loss: 0.174198] [ema: 0.999522] 
+[Epoch 6/22] [Batch 800/2300] [D loss: 0.402732] [G loss: 0.187594] [ema: 0.999525] 
+[Epoch 6/22] [Batch 900/2300] [D loss: 0.401858] [G loss: 0.178285] [ema: 0.999529] 
+[Epoch 6/22] [Batch 1000/2300] [D loss: 0.373000] [G loss: 0.190515] [ema: 0.999532] 
+[Epoch 6/22] [Batch 1100/2300] [D loss: 0.420114] [G loss: 0.175524] [ema: 0.999535] 
+[Epoch 6/22] [Batch 1200/2300] [D loss: 0.363075] [G loss: 0.187790] [ema: 0.999538] 
+[Epoch 6/22] [Batch 1300/2300] [D loss: 0.412574] [G loss: 0.191254] [ema: 0.999541] 
+[Epoch 6/22] [Batch 1400/2300] [D loss: 0.357496] [G loss: 0.192951] [ema: 0.999544] 
+[Epoch 6/22] [Batch 1500/2300] [D loss: 0.363173] [G loss: 0.196103] [ema: 0.999547] 
+[Epoch 6/22] [Batch 1600/2300] [D loss: 0.414772] [G loss: 0.172839] [ema: 0.999550] 
+[Epoch 6/22] [Batch 1700/2300] [D loss: 0.386682] [G loss: 0.189948] [ema: 0.999553] 
+[Epoch 6/22] [Batch 1800/2300] [D loss: 0.374077] [G loss: 0.172089] [ema: 0.999556] 
+[Epoch 6/22] [Batch 1900/2300] [D loss: 0.346911] [G loss: 0.193270] [ema: 0.999559] 
+[Epoch 6/22] [Batch 2000/2300] [D loss: 0.367979] [G loss: 0.200692] [ema: 0.999561] 
+[Epoch 6/22] [Batch 2100/2300] [D loss: 0.399378] [G loss: 0.181759] [ema: 0.999564] 
+[Epoch 6/22] [Batch 2200/2300] [D loss: 0.404468] [G loss: 0.183605] [ema: 0.999567] 
+[Epoch 7/22] [Batch 0/2300] [D loss: 0.381017] [G loss: 0.208742] [ema: 0.999570] 
+[Epoch 7/22] [Batch 100/2300] [D loss: 0.360455] [G loss: 0.182422] [ema: 0.999572] 
+[Epoch 7/22] [Batch 200/2300] [D loss: 0.434318] [G loss: 0.192840] [ema: 0.999575] 
+[Epoch 7/22] [Batch 300/2300] [D loss: 0.387328] [G loss: 0.174810] [ema: 0.999577] 
+[Epoch 7/22] [Batch 400/2300] [D loss: 0.409899] [G loss: 0.180957] [ema: 0.999580] 
+[Epoch 7/22] [Batch 500/2300] [D loss: 0.373832] [G loss: 0.186390] [ema: 0.999583] 
+[Epoch 7/22] [Batch 600/2300] [D loss: 0.374509] [G loss: 0.194440] [ema: 0.999585] 
+[Epoch 7/22] [Batch 700/2300] [D loss: 0.353617] [G loss: 0.201162] [ema: 0.999587] 
+[Epoch 7/22] [Batch 800/2300] [D loss: 0.395504] [G loss: 0.169924] [ema: 0.999590] 
+[Epoch 7/22] [Batch 900/2300] [D loss: 0.408820] [G loss: 0.180315] [ema: 0.999592] 
+[Epoch 7/22] [Batch 1000/2300] [D loss: 0.413548] [G loss: 0.174837] [ema: 0.999595] 
+[Epoch 7/22] [Batch 1100/2300] [D loss: 0.408811] [G loss: 0.170939] [ema: 0.999597] 
+[Epoch 7/22] [Batch 1200/2300] [D loss: 0.455773] [G loss: 0.186801] [ema: 0.999599] 
+[Epoch 7/22] [Batch 1300/2300] [D loss: 0.374735] [G loss: 0.194611] [ema: 0.999602] 
+[Epoch 7/22] [Batch 1400/2300] [D loss: 0.363073] [G loss: 0.194573] [ema: 0.999604] 
+[Epoch 7/22] [Batch 1500/2300] [D loss: 0.409334] [G loss: 0.186596] [ema: 0.999606] 
+[Epoch 7/22] [Batch 1600/2300] [D loss: 0.419339] [G loss: 0.183271] [ema: 0.999608] 
+[Epoch 7/22] [Batch 1700/2300] [D loss: 0.417910] [G loss: 0.180299] [ema: 0.999611] 
+[Epoch 7/22] [Batch 1800/2300] [D loss: 0.416143] [G loss: 0.205746] [ema: 0.999613] 
+[Epoch 7/22] [Batch 1900/2300] [D loss: 0.396583] [G loss: 0.194982] [ema: 0.999615] 
+[Epoch 7/22] [Batch 2000/2300] [D loss: 0.372501] [G loss: 0.172513] [ema: 0.999617] 
+[Epoch 7/22] [Batch 2100/2300] [D loss: 0.370150] [G loss: 0.189206] [ema: 0.999619] 
+[Epoch 7/22] [Batch 2200/2300] [D loss: 0.374384] [G loss: 0.174817] [ema: 0.999621] 
+[Epoch 8/22] [Batch 0/2300] [D loss: 0.369085] [G loss: 0.195033] [ema: 0.999623] 
+[Epoch 8/22] [Batch 100/2300] [D loss: 0.414124] [G loss: 0.195172] [ema: 0.999625] 
+[Epoch 8/22] [Batch 200/2300] [D loss: 0.349552] [G loss: 0.193205] [ema: 0.999627] 
+[Epoch 8/22] [Batch 300/2300] [D loss: 0.333012] [G loss: 0.189675] [ema: 0.999629] 
+[Epoch 8/22] [Batch 400/2300] [D loss: 0.381647] [G loss: 0.177571] [ema: 0.999631] 
+[Epoch 8/22] [Batch 500/2300] [D loss: 0.374141] [G loss: 0.172492] [ema: 0.999633] 
+[Epoch 8/22] [Batch 600/2300] [D loss: 0.371797] [G loss: 0.196975] [ema: 0.999635] 
+[Epoch 8/22] [Batch 700/2300] [D loss: 0.344032] [G loss: 0.197560] [ema: 0.999637] 
+[Epoch 8/22] [Batch 800/2300] [D loss: 0.322102] [G loss: 0.207926] [ema: 0.999639] 
+[Epoch 8/22] [Batch 900/2300] [D loss: 0.377841] [G loss: 0.198114] [ema: 0.999641] 
+[Epoch 8/22] [Batch 1000/2300] [D loss: 0.402789] [G loss: 0.183639] [ema: 0.999643] 
+[Epoch 8/22] [Batch 1100/2300] [D loss: 0.435339] [G loss: 0.139189] [ema: 0.999645] 
+[Epoch 8/22] [Batch 1200/2300] [D loss: 0.375484] [G loss: 0.208041] [ema: 0.999646] 
+[Epoch 8/22] [Batch 1300/2300] [D loss: 0.380998] [G loss: 0.198586] [ema: 0.999648] 
+[Epoch 8/22] [Batch 1400/2300] [D loss: 0.448489] [G loss: 0.177159] [ema: 0.999650] 
+[Epoch 8/22] [Batch 1500/2300] [D loss: 0.420790] [G loss: 0.179705] [ema: 0.999652] 
+[Epoch 8/22] [Batch 1600/2300] [D loss: 0.399945] [G loss: 0.176647] [ema: 0.999653] 
+[Epoch 8/22] [Batch 1700/2300] [D loss: 0.423218] [G loss: 0.206419] [ema: 0.999655] 
+[Epoch 8/22] [Batch 1800/2300] [D loss: 0.370481] [G loss: 0.182102] [ema: 0.999657] 
+[Epoch 8/22] [Batch 1900/2300] [D loss: 0.392065] [G loss: 0.180882] [ema: 0.999659] 
+[Epoch 8/22] [Batch 2000/2300] [D loss: 0.369774] [G loss: 0.182481] [ema: 0.999660] 
+[Epoch 8/22] [Batch 2100/2300] [D loss: 0.430448] [G loss: 0.178789] [ema: 0.999662] 
+[Epoch 8/22] [Batch 2200/2300] [D loss: 0.370989] [G loss: 0.215341] [ema: 0.999664] 
+[Epoch 9/22] [Batch 0/2300] [D loss: 0.391750] [G loss: 0.192988] [ema: 0.999665] 
+[Epoch 9/22] [Batch 100/2300] [D loss: 0.387174] [G loss: 0.191179] [ema: 0.999667] 
+[Epoch 9/22] [Batch 200/2300] [D loss: 0.365939] [G loss: 0.167739] [ema: 0.999668] 
+[Epoch 9/22] [Batch 300/2300] [D loss: 0.378001] [G loss: 0.185963] [ema: 0.999670] 
+[Epoch 9/22] [Batch 400/2300] [D loss: 0.373648] [G loss: 0.189695] [ema: 0.999672] 
+[Epoch 9/22] [Batch 500/2300] [D loss: 0.334690] [G loss: 0.187920] [ema: 0.999673] 
+[Epoch 9/22] [Batch 600/2300] [D loss: 0.401044] [G loss: 0.182802] [ema: 0.999675] 
+[Epoch 9/22] [Batch 700/2300] [D loss: 0.463258] [G loss: 0.171045] [ema: 0.999676] 
+[Epoch 9/22] [Batch 800/2300] [D loss: 0.388291] [G loss: 0.173281] [ema: 0.999678] 
+[Epoch 9/22] [Batch 900/2300] [D loss: 0.406967] [G loss: 0.179015] [ema: 0.999679] 
+[Epoch 9/22] [Batch 1000/2300] [D loss: 0.439651] [G loss: 0.185526] [ema: 0.999681] 
+[Epoch 9/22] [Batch 1100/2300] [D loss: 0.355974] [G loss: 0.188793] [ema: 0.999682] 
+[Epoch 9/22] [Batch 1200/2300] [D loss: 0.409300] [G loss: 0.193447] [ema: 0.999684] 
+[Epoch 9/22] [Batch 1300/2300] [D loss: 0.412897] [G loss: 0.175771] [ema: 0.999685] 
+[Epoch 9/22] [Batch 1400/2300] [D loss: 0.355596] [G loss: 0.192089] [ema: 0.999686] 
+[Epoch 9/22] [Batch 1500/2300] [D loss: 0.438254] [G loss: 0.184796] [ema: 0.999688] 
+[Epoch 9/22] [Batch 1600/2300] [D loss: 0.414441] [G loss: 0.183946] [ema: 0.999689] 
+[Epoch 9/22] [Batch 1700/2300] [D loss: 0.394658] [G loss: 0.189772] [ema: 0.999691] 
+[Epoch 9/22] [Batch 1800/2300] [D loss: 0.405217] [G loss: 0.195164] [ema: 0.999692] 
+[Epoch 9/22] [Batch 1900/2300] [D loss: 0.394179] [G loss: 0.186202] [ema: 0.999693] 
+[Epoch 9/22] [Batch 2000/2300] [D loss: 0.408947] [G loss: 0.169608] [ema: 0.999695] 
+[Epoch 9/22] [Batch 2100/2300] [D loss: 0.449091] [G loss: 0.181028] [ema: 0.999696] 
+[Epoch 9/22] [Batch 2200/2300] [D loss: 0.379319] [G loss: 0.190996] [ema: 0.999697] 
+[Epoch 10/22] [Batch 0/2300] [D loss: 0.426837] [G loss: 0.184215] [ema: 0.999699] 
+[Epoch 10/22] [Batch 100/2300] [D loss: 0.415345] [G loss: 0.176869] [ema: 0.999700] 
+[Epoch 10/22] [Batch 200/2300] [D loss: 0.352889] [G loss: 0.184691] [ema: 0.999701] 
+[Epoch 10/22] [Batch 300/2300] [D loss: 0.436845] [G loss: 0.195317] [ema: 0.999703] 
+[Epoch 10/22] [Batch 400/2300] [D loss: 0.392830] [G loss: 0.183011] [ema: 0.999704] 
+[Epoch 10/22] [Batch 500/2300] [D loss: 0.398351] [G loss: 0.189588] [ema: 0.999705] 
+[Epoch 10/22] [Batch 600/2300] [D loss: 0.357265] [G loss: 0.195448] [ema: 0.999706] 
+[Epoch 10/22] [Batch 700/2300] [D loss: 0.421306] [G loss: 0.165980] [ema: 0.999708] 
+[Epoch 10/22] [Batch 800/2300] [D loss: 0.399700] [G loss: 0.178461] [ema: 0.999709] 
+[Epoch 10/22] [Batch 900/2300] [D loss: 0.410431] [G loss: 0.174440] [ema: 0.999710] 
+[Epoch 10/22] [Batch 1000/2300] [D loss: 0.353727] [G loss: 0.205038] [ema: 0.999711] 
+[Epoch 10/22] [Batch 1100/2300] [D loss: 0.471863] [G loss: 0.168039] [ema: 0.999712] 
+[Epoch 10/22] [Batch 1200/2300] [D loss: 0.418853] [G loss: 0.196190] [ema: 0.999714] 
+[Epoch 10/22] [Batch 1300/2300] [D loss: 0.422735] [G loss: 0.172899] [ema: 0.999715] 
+[Epoch 10/22] [Batch 1400/2300] [D loss: 0.410203] [G loss: 0.188854] [ema: 0.999716] 
+[Epoch 10/22] [Batch 1500/2300] [D loss: 0.371570] [G loss: 0.189704] [ema: 0.999717] 
+[Epoch 10/22] [Batch 1600/2300] [D loss: 0.425705] [G loss: 0.183747] [ema: 0.999718] 
+[Epoch 10/22] [Batch 1700/2300] [D loss: 0.468717] [G loss: 0.164758] [ema: 0.999719] 
+[Epoch 10/22] [Batch 1800/2300] [D loss: 0.386701] [G loss: 0.173073] [ema: 0.999721] 
+[Epoch 10/22] [Batch 1900/2300] [D loss: 0.413467] [G loss: 0.184131] [ema: 0.999722] 
+[Epoch 10/22] [Batch 2000/2300] [D loss: 0.414634] [G loss: 0.164755] [ema: 0.999723] 
+[Epoch 10/22] [Batch 2100/2300] [D loss: 0.422770] [G loss: 0.183865] [ema: 0.999724] 
+[Epoch 10/22] [Batch 2200/2300] [D loss: 0.409320] [G loss: 0.180176] [ema: 0.999725] 
+[Epoch 11/22] [Batch 0/2300] [D loss: 0.357451] [G loss: 0.199329] [ema: 0.999726] 
+[Epoch 11/22] [Batch 100/2300] [D loss: 0.408255] [G loss: 0.193319] [ema: 0.999727] 
+[Epoch 11/22] [Batch 200/2300] [D loss: 0.424334] [G loss: 0.167231] [ema: 0.999728] 
+[Epoch 11/22] [Batch 300/2300] [D loss: 0.397050] [G loss: 0.188855] [ema: 0.999729] 
+[Epoch 11/22] [Batch 400/2300] [D loss: 0.404110] [G loss: 0.174161] [ema: 0.999730] 
+[Epoch 11/22] [Batch 500/2300] [D loss: 0.426173] [G loss: 0.183851] [ema: 0.999731] 
+[Epoch 11/22] [Batch 600/2300] [D loss: 0.430546] [G loss: 0.173260] [ema: 0.999732] 
+[Epoch 11/22] [Batch 700/2300] [D loss: 0.413676] [G loss: 0.171819] [ema: 0.999733] 
+[Epoch 11/22] [Batch 800/2300] [D loss: 0.367599] [G loss: 0.181850] [ema: 0.999734] 
+[Epoch 11/22] [Batch 900/2300] [D loss: 0.354920] [G loss: 0.193143] [ema: 0.999735] 
+[Epoch 11/22] [Batch 1000/2300] [D loss: 0.393931] [G loss: 0.183566] [ema: 0.999736] 
+[Epoch 11/22] [Batch 1100/2300] [D loss: 0.417061] [G loss: 0.138645] [ema: 0.999737] 
+[Epoch 11/22] [Batch 1200/2300] [D loss: 0.393856] [G loss: 0.191608] [ema: 0.999738] 
+[Epoch 11/22] [Batch 1300/2300] [D loss: 0.366110] [G loss: 0.183513] [ema: 0.999739] 
+[Epoch 11/22] [Batch 1400/2300] [D loss: 0.430543] [G loss: 0.184295] [ema: 0.999740] 
+[Epoch 11/22] [Batch 1500/2300] [D loss: 0.404669] [G loss: 0.177324] [ema: 0.999741] 
+[Epoch 11/22] [Batch 1600/2300] [D loss: 0.355806] [G loss: 0.174739] [ema: 0.999742] 
+[Epoch 11/22] [Batch 1700/2300] [D loss: 0.417563] [G loss: 0.184788] [ema: 0.999743] 
+[Epoch 11/22] [Batch 1800/2300] [D loss: 0.423843] [G loss: 0.169558] [ema: 0.999744] 
+[Epoch 11/22] [Batch 1900/2300] [D loss: 0.411644] [G loss: 0.182431] [ema: 0.999745] 
+[Epoch 11/22] [Batch 2000/2300] [D loss: 0.415186] [G loss: 0.187471] [ema: 0.999746] 
+[Epoch 11/22] [Batch 2100/2300] [D loss: 0.376940] [G loss: 0.212515] [ema: 0.999747] 
+[Epoch 11/22] [Batch 2200/2300] [D loss: 0.424356] [G loss: 0.187348] [ema: 0.999748] 
+
+
+
+Saving checkpoint 3 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+
+
+
+[Epoch 12/22] [Batch 0/2300] [D loss: 0.403456] [G loss: 0.188100] [ema: 0.999749] 
+[Epoch 12/22] [Batch 100/2300] [D loss: 0.384028] [G loss: 0.194146] [ema: 0.999750] 
+[Epoch 12/22] [Batch 200/2300] [D loss: 0.422224] [G loss: 0.174634] [ema: 0.999751] 
+[Epoch 12/22] [Batch 300/2300] [D loss: 0.411969] [G loss: 0.171923] [ema: 0.999752] 
+[Epoch 12/22] [Batch 400/2300] [D loss: 0.407350] [G loss: 0.181443] [ema: 0.999752] 
+[Epoch 12/22] [Batch 500/2300] [D loss: 0.435728] [G loss: 0.174244] [ema: 0.999753] 
+[Epoch 12/22] [Batch 600/2300] [D loss: 0.418637] [G loss: 0.182886] [ema: 0.999754] 
+[Epoch 12/22] [Batch 700/2300] [D loss: 0.386272] [G loss: 0.179417] [ema: 0.999755] 
+[Epoch 12/22] [Batch 800/2300] [D loss: 0.402239] [G loss: 0.171615] [ema: 0.999756] 
+[Epoch 12/22] [Batch 900/2300] [D loss: 0.384478] [G loss: 0.183670] [ema: 0.999757] 
+[Epoch 12/22] [Batch 1000/2300] [D loss: 0.408149] [G loss: 0.170264] [ema: 0.999758] 
+[Epoch 12/22] [Batch 1100/2300] [D loss: 0.422882] [G loss: 0.178731] [ema: 0.999759] 
+[Epoch 12/22] [Batch 1200/2300] [D loss: 0.436679] [G loss: 0.176737] [ema: 0.999759] 
+[Epoch 12/22] [Batch 1300/2300] [D loss: 0.453897] [G loss: 0.178071] [ema: 0.999760] 
+[Epoch 12/22] [Batch 1400/2300] [D loss: 0.401674] [G loss: 0.180292] [ema: 0.999761] 
+[Epoch 12/22] [Batch 1500/2300] [D loss: 0.416390] [G loss: 0.164945] [ema: 0.999762] 
+[Epoch 12/22] [Batch 1600/2300] [D loss: 0.431032] [G loss: 0.162747] [ema: 0.999763] 
+[Epoch 12/22] [Batch 1700/2300] [D loss: 0.375353] [G loss: 0.175673] [ema: 0.999763] 
+[Epoch 12/22] [Batch 1800/2300] [D loss: 0.404792] [G loss: 0.170307] [ema: 0.999764] 
+[Epoch 12/22] [Batch 1900/2300] [D loss: 0.370277] [G loss: 0.186595] [ema: 0.999765] 
+[Epoch 12/22] [Batch 2000/2300] [D loss: 0.436213] [G loss: 0.171679] [ema: 0.999766] 
+[Epoch 12/22] [Batch 2100/2300] [D loss: 0.466220] [G loss: 0.175522] [ema: 0.999767] 
+[Epoch 12/22] [Batch 2200/2300] [D loss: 0.384080] [G loss: 0.181562] [ema: 0.999767] 
+[Epoch 13/22] [Batch 0/2300] [D loss: 0.402013] [G loss: 0.192404] [ema: 0.999768] 
+[Epoch 13/22] [Batch 100/2300] [D loss: 0.373620] [G loss: 0.186692] [ema: 0.999769] 
+[Epoch 13/22] [Batch 200/2300] [D loss: 0.423740] [G loss: 0.189812] [ema: 0.999770] 
+[Epoch 13/22] [Batch 300/2300] [D loss: 0.435198] [G loss: 0.172720] [ema: 0.999771] 
+[Epoch 13/22] [Batch 400/2300] [D loss: 0.425718] [G loss: 0.168456] [ema: 0.999771] 
+[Epoch 13/22] [Batch 500/2300] [D loss: 0.409646] [G loss: 0.176301] [ema: 0.999772] 
+[Epoch 13/22] [Batch 600/2300] [D loss: 0.426965] [G loss: 0.171604] [ema: 0.999773] 
+[Epoch 13/22] [Batch 700/2300] [D loss: 0.458096] [G loss: 0.168858] [ema: 0.999774] 
+[Epoch 13/22] [Batch 800/2300] [D loss: 0.402132] [G loss: 0.166605] [ema: 0.999774] 
+[Epoch 13/22] [Batch 900/2300] [D loss: 0.414963] [G loss: 0.168471] [ema: 0.999775] 
+[Epoch 13/22] [Batch 1000/2300] [D loss: 0.422393] [G loss: 0.169512] [ema: 0.999776] 
+[Epoch 13/22] [Batch 1100/2300] [D loss: 0.409304] [G loss: 0.178160] [ema: 0.999776] 
+[Epoch 13/22] [Batch 1200/2300] [D loss: 0.386766] [G loss: 0.178353] [ema: 0.999777] 
+[Epoch 13/22] [Batch 1300/2300] [D loss: 0.423266] [G loss: 0.167653] [ema: 0.999778] 
+[Epoch 13/22] [Batch 1400/2300] [D loss: 0.399982] [G loss: 0.178959] [ema: 0.999779] 
+[Epoch 13/22] [Batch 1500/2300] [D loss: 0.396853] [G loss: 0.166334] [ema: 0.999779] 
+[Epoch 13/22] [Batch 1600/2300] [D loss: 0.350293] [G loss: 0.177552] [ema: 0.999780] 
+[Epoch 13/22] [Batch 1700/2300] [D loss: 0.419041] [G loss: 0.163803] [ema: 0.999781] 
+[Epoch 13/22] [Batch 1800/2300] [D loss: 0.404997] [G loss: 0.188187] [ema: 0.999781] 
+[Epoch 13/22] [Batch 1900/2300] [D loss: 0.411980] [G loss: 0.172875] [ema: 0.999782] 
+[Epoch 13/22] [Batch 2000/2300] [D loss: 0.437222] [G loss: 0.158471] [ema: 0.999783] 
+[Epoch 13/22] [Batch 2100/2300] [D loss: 0.392111] [G loss: 0.173428] [ema: 0.999783] 
+[Epoch 13/22] [Batch 2200/2300] [D loss: 0.426260] [G loss: 0.190526] [ema: 0.999784] 
+[Epoch 14/22] [Batch 0/2300] [D loss: 0.391550] [G loss: 0.177242] [ema: 0.999785] 
+[Epoch 14/22] [Batch 100/2300] [D loss: 0.388080] [G loss: 0.181369] [ema: 0.999785] 
+[Epoch 14/22] [Batch 200/2300] [D loss: 0.408954] [G loss: 0.194598] [ema: 0.999786] 
+[Epoch 14/22] [Batch 300/2300] [D loss: 0.423178] [G loss: 0.183375] [ema: 0.999787] 
+[Epoch 14/22] [Batch 400/2300] [D loss: 0.427802] [G loss: 0.164992] [ema: 0.999787] 
+[Epoch 14/22] [Batch 500/2300] [D loss: 0.425254] [G loss: 0.164376] [ema: 0.999788] 
+[Epoch 14/22] [Batch 600/2300] [D loss: 0.439572] [G loss: 0.171395] [ema: 0.999789] 
+[Epoch 14/22] [Batch 700/2300] [D loss: 0.412286] [G loss: 0.190043] [ema: 0.999789] 
+[Epoch 14/22] [Batch 800/2300] [D loss: 0.377310] [G loss: 0.163366] [ema: 0.999790] 
+[Epoch 14/22] [Batch 900/2300] [D loss: 0.392094] [G loss: 0.177124] [ema: 0.999791] 
+[Epoch 14/22] [Batch 1000/2300] [D loss: 0.439732] [G loss: 0.173956] [ema: 0.999791] 
+[Epoch 14/22] [Batch 1100/2300] [D loss: 0.377646] [G loss: 0.176346] [ema: 0.999792] 
+[Epoch 14/22] [Batch 1200/2300] [D loss: 0.426334] [G loss: 0.180409] [ema: 0.999792] 
+[Epoch 14/22] [Batch 1300/2300] [D loss: 0.405701] [G loss: 0.162220] [ema: 0.999793] 
+[Epoch 14/22] [Batch 1400/2300] [D loss: 0.423432] [G loss: 0.173346] [ema: 0.999794] 
+[Epoch 14/22] [Batch 1500/2300] [D loss: 0.374938] [G loss: 0.176100] [ema: 0.999794] 
+[Epoch 14/22] [Batch 1600/2300] [D loss: 0.461271] [G loss: 0.164724] [ema: 0.999795] 
+[Epoch 14/22] [Batch 1700/2300] [D loss: 0.416876] [G loss: 0.176889] [ema: 0.999796] 
+[Epoch 14/22] [Batch 1800/2300] [D loss: 0.433041] [G loss: 0.167563] [ema: 0.999796] 
+[Epoch 14/22] [Batch 1900/2300] [D loss: 0.403118] [G loss: 0.170632] [ema: 0.999797] 
+[Epoch 14/22] [Batch 2000/2300] [D loss: 0.430658] [G loss: 0.174314] [ema: 0.999797] 
+[Epoch 14/22] [Batch 2100/2300] [D loss: 0.445276] [G loss: 0.163521] [ema: 0.999798] 
+[Epoch 14/22] [Batch 2200/2300] [D loss: 0.443171] [G loss: 0.176770] [ema: 0.999799] 
+[Epoch 15/22] [Batch 0/2300] [D loss: 0.387993] [G loss: 0.185953] [ema: 0.999799] 
+[Epoch 15/22] [Batch 100/2300] [D loss: 0.452435] [G loss: 0.168397] [ema: 0.999800] 
+[Epoch 15/22] [Batch 200/2300] [D loss: 0.478150] [G loss: 0.178955] [ema: 0.999800] 
+[Epoch 15/22] [Batch 300/2300] [D loss: 0.424800] [G loss: 0.176454] [ema: 0.999801] 
+[Epoch 15/22] [Batch 400/2300] [D loss: 0.421105] [G loss: 0.176066] [ema: 0.999801] 
+[Epoch 15/22] [Batch 500/2300] [D loss: 0.415485] [G loss: 0.167608] [ema: 0.999802] 
+[Epoch 15/22] [Batch 600/2300] [D loss: 0.391046] [G loss: 0.177229] [ema: 0.999803] 
+[Epoch 15/22] [Batch 700/2300] [D loss: 0.426868] [G loss: 0.178514] [ema: 0.999803] 
+[Epoch 15/22] [Batch 800/2300] [D loss: 0.423279] [G loss: 0.164239] [ema: 0.999804] 
+[Epoch 15/22] [Batch 900/2300] [D loss: 0.420186] [G loss: 0.166463] [ema: 0.999804] 
+[Epoch 15/22] [Batch 1000/2300] [D loss: 0.437130] [G loss: 0.187366] [ema: 0.999805] 
+[Epoch 15/22] [Batch 1100/2300] [D loss: 0.413102] [G loss: 0.169271] [ema: 0.999805] 
+[Epoch 15/22] [Batch 1200/2300] [D loss: 0.406104] [G loss: 0.181665] [ema: 0.999806] 
+[Epoch 15/22] [Batch 1300/2300] [D loss: 0.424604] [G loss: 0.173327] [ema: 0.999806] 
+[Epoch 15/22] [Batch 1400/2300] [D loss: 0.411653] [G loss: 0.180438] [ema: 0.999807] 
+[Epoch 15/22] [Batch 1500/2300] [D loss: 0.365077] [G loss: 0.192217] [ema: 0.999807] 
+[Epoch 15/22] [Batch 1600/2300] [D loss: 0.399751] [G loss: 0.170437] [ema: 0.999808] 
+[Epoch 15/22] [Batch 1700/2300] [D loss: 0.371737] [G loss: 0.179659] [ema: 0.999809] 
+[Epoch 15/22] [Batch 1800/2300] [D loss: 0.425425] [G loss: 0.181156] [ema: 0.999809] 
+[Epoch 15/22] [Batch 1900/2300] [D loss: 0.430356] [G loss: 0.176580] [ema: 0.999810] 
+[Epoch 15/22] [Batch 2000/2300] [D loss: 0.369513] [G loss: 0.177513] [ema: 0.999810] 
+[Epoch 15/22] [Batch 2100/2300] [D loss: 0.391113] [G loss: 0.182009] [ema: 0.999811] 
+[Epoch 15/22] [Batch 2200/2300] [D loss: 0.399360] [G loss: 0.177269] [ema: 0.999811] 
+[Epoch 16/22] [Batch 0/2300] [D loss: 0.449645] [G loss: 0.168627] [ema: 0.999812] 
+[Epoch 16/22] [Batch 100/2300] [D loss: 0.440404] [G loss: 0.153973] [ema: 0.999812] 
+[Epoch 16/22] [Batch 200/2300] [D loss: 0.451258] [G loss: 0.182552] [ema: 0.999813] 
+[Epoch 16/22] [Batch 300/2300] [D loss: 0.404387] [G loss: 0.177925] [ema: 0.999813] 
+[Epoch 16/22] [Batch 400/2300] [D loss: 0.408989] [G loss: 0.181520] [ema: 0.999814] 
+[Epoch 16/22] [Batch 500/2300] [D loss: 0.395871] [G loss: 0.167136] [ema: 0.999814] 
+[Epoch 16/22] [Batch 600/2300] [D loss: 0.434327] [G loss: 0.164620] [ema: 0.999815] 
+[Epoch 16/22] [Batch 700/2300] [D loss: 0.412754] [G loss: 0.192127] [ema: 0.999815] 
+[Epoch 16/22] [Batch 800/2300] [D loss: 0.399790] [G loss: 0.170859] [ema: 0.999816] 
+[Epoch 16/22] [Batch 900/2300] [D loss: 0.442278] [G loss: 0.172846] [ema: 0.999816] 
+[Epoch 16/22] [Batch 1000/2300] [D loss: 0.432439] [G loss: 0.166746] [ema: 0.999817] 
+[Epoch 16/22] [Batch 1100/2300] [D loss: 0.393761] [G loss: 0.172520] [ema: 0.999817] 
+[Epoch 16/22] [Batch 1200/2300] [D loss: 0.414485] [G loss: 0.181494] [ema: 0.999818] 
+[Epoch 16/22] [Batch 1300/2300] [D loss: 0.342582] [G loss: 0.184664] [ema: 0.999818] 
+[Epoch 16/22] [Batch 1400/2300] [D loss: 0.420410] [G loss: 0.184346] [ema: 0.999819] 
+[Epoch 16/22] [Batch 1500/2300] [D loss: 0.442610] [G loss: 0.182872] [ema: 0.999819] 
+[Epoch 16/22] [Batch 1600/2300] [D loss: 0.421759] [G loss: 0.180173] [ema: 0.999820] 
+[Epoch 16/22] [Batch 1700/2300] [D loss: 0.414877] [G loss: 0.176429] [ema: 0.999820] 
+[Epoch 16/22] [Batch 1800/2300] [D loss: 0.396483] [G loss: 0.154818] [ema: 0.999820] 
+[Epoch 16/22] [Batch 1900/2300] [D loss: 0.373868] [G loss: 0.184473] [ema: 0.999821] 
+[Epoch 16/22] [Batch 2000/2300] [D loss: 0.426723] [G loss: 0.168533] [ema: 0.999821] 
+[Epoch 16/22] [Batch 2100/2300] [D loss: 0.422721] [G loss: 0.171735] [ema: 0.999822] 
+[Epoch 16/22] [Batch 2200/2300] [D loss: 0.434328] [G loss: 0.163954] [ema: 0.999822] 
+[Epoch 17/22] [Batch 0/2300] [D loss: 0.393488] [G loss: 0.176000] [ema: 0.999823] 
+[Epoch 17/22] [Batch 100/2300] [D loss: 0.406575] [G loss: 0.182282] [ema: 0.999823] 
+[Epoch 17/22] [Batch 200/2300] [D loss: 0.422755] [G loss: 0.164560] [ema: 0.999824] 
+[Epoch 17/22] [Batch 300/2300] [D loss: 0.407207] [G loss: 0.176412] [ema: 0.999824] 
+[Epoch 17/22] [Batch 400/2300] [D loss: 0.401818] [G loss: 0.188548] [ema: 0.999825] 
+[Epoch 17/22] [Batch 500/2300] [D loss: 0.386810] [G loss: 0.172398] [ema: 0.999825] 
+[Epoch 17/22] [Batch 600/2300] [D loss: 0.375632] [G loss: 0.167644] [ema: 0.999825] 
+[Epoch 17/22] [Batch 700/2300] [D loss: 0.430141] [G loss: 0.174131] [ema: 0.999826] 
+[Epoch 17/22] [Batch 800/2300] [D loss: 0.398844] [G loss: 0.169025] [ema: 0.999826] 
+[Epoch 17/22] [Batch 900/2300] [D loss: 0.402659] [G loss: 0.166010] [ema: 0.999827] 
+[Epoch 17/22] [Batch 1000/2300] [D loss: 0.420030] [G loss: 0.171459] [ema: 0.999827] 
+[Epoch 17/22] [Batch 1100/2300] [D loss: 0.418840] [G loss: 0.173892] [ema: 0.999828] 
+[Epoch 17/22] [Batch 1200/2300] [D loss: 0.406994] [G loss: 0.159299] [ema: 0.999828] 
+[Epoch 17/22] [Batch 1300/2300] [D loss: 0.416604] [G loss: 0.173663] [ema: 0.999828] 
+[Epoch 17/22] [Batch 1400/2300] [D loss: 0.375639] [G loss: 0.171197] [ema: 0.999829] 
+[Epoch 17/22] [Batch 1500/2300] [D loss: 0.397251] [G loss: 0.171231] [ema: 0.999829] 
+[Epoch 17/22] [Batch 1600/2300] [D loss: 0.400454] [G loss: 0.177185] [ema: 0.999830] 
+[Epoch 17/22] [Batch 1700/2300] [D loss: 0.365030] [G loss: 0.183285] [ema: 0.999830] 
+[Epoch 17/22] [Batch 1800/2300] [D loss: 0.477708] [G loss: 0.180940] [ema: 0.999831] 
+[Epoch 17/22] [Batch 1900/2300] [D loss: 0.430550] [G loss: 0.164846] [ema: 0.999831] 
+[Epoch 17/22] [Batch 2000/2300] [D loss: 0.374390] [G loss: 0.166674] [ema: 0.999831] 
+[Epoch 17/22] [Batch 2100/2300] [D loss: 0.452326] [G loss: 0.163651] [ema: 0.999832] 
+[Epoch 17/22] [Batch 2200/2300] [D loss: 0.405657] [G loss: 0.163719] [ema: 0.999832] 
+
+
+
+Saving checkpoint 4 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+
+
+
+[Epoch 18/22] [Batch 0/2300] [D loss: 0.394165] [G loss: 0.181399] [ema: 0.999833] 
+[Epoch 18/22] [Batch 100/2300] [D loss: 0.430850] [G loss: 0.164033] [ema: 0.999833] 
+[Epoch 18/22] [Batch 200/2300] [D loss: 0.402789] [G loss: 0.175419] [ema: 0.999833] 
+[Epoch 18/22] [Batch 300/2300] [D loss: 0.448779] [G loss: 0.166752] [ema: 0.999834] 
+[Epoch 18/22] [Batch 400/2300] [D loss: 0.382066] [G loss: 0.181897] [ema: 0.999834] 
+[Epoch 18/22] [Batch 500/2300] [D loss: 0.444783] [G loss: 0.184952] [ema: 0.999835] 
+[Epoch 18/22] [Batch 600/2300] [D loss: 0.432698] [G loss: 0.168650] [ema: 0.999835] 
+[Epoch 18/22] [Batch 700/2300] [D loss: 0.403153] [G loss: 0.184298] [ema: 0.999835] 
+[Epoch 18/22] [Batch 800/2300] [D loss: 0.425722] [G loss: 0.182400] [ema: 0.999836] 
+[Epoch 18/22] [Batch 900/2300] [D loss: 0.401574] [G loss: 0.171416] [ema: 0.999836] 
+[Epoch 18/22] [Batch 1000/2300] [D loss: 0.458221] [G loss: 0.190196] [ema: 0.999837] 
+[Epoch 18/22] [Batch 1100/2300] [D loss: 0.435742] [G loss: 0.149517] [ema: 0.999837] 
+[Epoch 18/22] [Batch 1200/2300] [D loss: 0.417354] [G loss: 0.175269] [ema: 0.999837] 
+[Epoch 18/22] [Batch 1300/2300] [D loss: 0.444427] [G loss: 0.159018] [ema: 0.999838] 
+[Epoch 18/22] [Batch 1400/2300] [D loss: 0.404122] [G loss: 0.175724] [ema: 0.999838] 
+[Epoch 18/22] [Batch 1500/2300] [D loss: 0.490618] [G loss: 0.179472] [ema: 0.999838] 
+[Epoch 18/22] [Batch 1600/2300] [D loss: 0.482770] [G loss: 0.169446] [ema: 0.999839] 
+[Epoch 18/22] [Batch 1700/2300] [D loss: 0.392132] [G loss: 0.176017] [ema: 0.999839] 
+[Epoch 18/22] [Batch 1800/2300] [D loss: 0.443756] [G loss: 0.177498] [ema: 0.999840] 
+[Epoch 18/22] [Batch 1900/2300] [D loss: 0.406825] [G loss: 0.191204] [ema: 0.999840] 
+[Epoch 18/22] [Batch 2000/2300] [D loss: 0.413646] [G loss: 0.166737] [ema: 0.999840] 
+[Epoch 18/22] [Batch 2100/2300] [D loss: 0.424793] [G loss: 0.191297] [ema: 0.999841] 
+[Epoch 18/22] [Batch 2200/2300] [D loss: 0.380263] [G loss: 0.195753] [ema: 0.999841] 
+[Epoch 19/22] [Batch 0/2300] [D loss: 0.394155] [G loss: 0.179271] [ema: 0.999841] 
+[Epoch 19/22] [Batch 100/2300] [D loss: 0.397529] [G loss: 0.182379] [ema: 0.999842] 
+[Epoch 19/22] [Batch 200/2300] [D loss: 0.426960] [G loss: 0.155973] [ema: 0.999842] 
+[Epoch 19/22] [Batch 300/2300] [D loss: 0.408455] [G loss: 0.173699] [ema: 0.999842] 
+[Epoch 19/22] [Batch 400/2300] [D loss: 0.437179] [G loss: 0.191479] [ema: 0.999843] 
+[Epoch 19/22] [Batch 500/2300] [D loss: 0.363330] [G loss: 0.162706] [ema: 0.999843] 
+[Epoch 19/22] [Batch 600/2300] [D loss: 0.387533] [G loss: 0.181953] [ema: 0.999844] 
+[Epoch 19/22] [Batch 700/2300] [D loss: 0.373417] [G loss: 0.172726] [ema: 0.999844] 
+[Epoch 19/22] [Batch 800/2300] [D loss: 0.404081] [G loss: 0.150317] [ema: 0.999844] 
+[Epoch 19/22] [Batch 900/2300] [D loss: 0.449566] [G loss: 0.172987] [ema: 0.999845] 
+[Epoch 19/22] [Batch 1000/2300] [D loss: 0.431657] [G loss: 0.154555] [ema: 0.999845] 
+[Epoch 19/22] [Batch 1100/2300] [D loss: 0.417732] [G loss: 0.182366] [ema: 0.999845] 
+[Epoch 19/22] [Batch 1200/2300] [D loss: 0.409129] [G loss: 0.183609] [ema: 0.999846] 
+[Epoch 19/22] [Batch 1300/2300] [D loss: 0.415011] [G loss: 0.161704] [ema: 0.999846] 
+[Epoch 19/22] [Batch 1400/2300] [D loss: 0.372381] [G loss: 0.189414] [ema: 0.999846] 
+[Epoch 19/22] [Batch 1500/2300] [D loss: 0.401166] [G loss: 0.180598] [ema: 0.999847] 
+[Epoch 19/22] [Batch 1600/2300] [D loss: 0.376350] [G loss: 0.169409] [ema: 0.999847] 
+[Epoch 19/22] [Batch 1700/2300] [D loss: 0.376722] [G loss: 0.193260] [ema: 0.999847] 
+[Epoch 19/22] [Batch 1800/2300] [D loss: 0.444959] [G loss: 0.178570] [ema: 0.999848] 
+[Epoch 19/22] [Batch 1900/2300] [D loss: 0.359231] [G loss: 0.162284] [ema: 0.999848] 
+[Epoch 19/22] [Batch 2000/2300] [D loss: 0.441932] [G loss: 0.170122] [ema: 0.999848] 
+[Epoch 19/22] [Batch 2100/2300] [D loss: 0.377152] [G loss: 0.190065] [ema: 0.999849] 
+[Epoch 19/22] [Batch 2200/2300] [D loss: 0.394342] [G loss: 0.160390] [ema: 0.999849] 
+[Epoch 20/22] [Batch 0/2300] [D loss: 0.375016] [G loss: 0.185862] [ema: 0.999849] 
+[Epoch 20/22] [Batch 100/2300] [D loss: 0.393024] [G loss: 0.179328] [ema: 0.999850] 
+[Epoch 20/22] [Batch 200/2300] [D loss: 0.417418] [G loss: 0.174894] [ema: 0.999850] 
+[Epoch 20/22] [Batch 300/2300] [D loss: 0.409718] [G loss: 0.209741] [ema: 0.999850] 
+[Epoch 20/22] [Batch 400/2300] [D loss: 0.382440] [G loss: 0.174427] [ema: 0.999851] 
+[Epoch 20/22] [Batch 500/2300] [D loss: 0.374842] [G loss: 0.175711] [ema: 0.999851] 
+[Epoch 20/22] [Batch 600/2300] [D loss: 0.339842] [G loss: 0.191287] [ema: 0.999851] 
+[Epoch 20/22] [Batch 700/2300] [D loss: 0.394176] [G loss: 0.180647] [ema: 0.999852] 
+[Epoch 20/22] [Batch 800/2300] [D loss: 0.391329] [G loss: 0.176645] [ema: 0.999852] 
+[Epoch 20/22] [Batch 900/2300] [D loss: 0.373624] [G loss: 0.164162] [ema: 0.999852] 
+[Epoch 20/22] [Batch 1000/2300] [D loss: 0.403204] [G loss: 0.178553] [ema: 0.999853] 
+[Epoch 20/22] [Batch 1100/2300] [D loss: 0.365868] [G loss: 0.194635] [ema: 0.999853] 
+[Epoch 20/22] [Batch 1200/2300] [D loss: 0.414155] [G loss: 0.181835] [ema: 0.999853] 
+[Epoch 20/22] [Batch 1300/2300] [D loss: 0.411902] [G loss: 0.165363] [ema: 0.999853] 
+[Epoch 20/22] [Batch 1400/2300] [D loss: 0.400922] [G loss: 0.166687] [ema: 0.999854] 
+[Epoch 20/22] [Batch 1500/2300] [D loss: 0.452192] [G loss: 0.182644] [ema: 0.999854] 
+[Epoch 20/22] [Batch 1600/2300] [D loss: 0.337836] [G loss: 0.195024] [ema: 0.999854] 
+[Epoch 20/22] [Batch 1700/2300] [D loss: 0.386483] [G loss: 0.162625] [ema: 0.999855] 
+[Epoch 20/22] [Batch 1800/2300] [D loss: 0.409737] [G loss: 0.180654] [ema: 0.999855] 
+[Epoch 20/22] [Batch 1900/2300] [D loss: 0.403202] [G loss: 0.178721] [ema: 0.999855] 
+[Epoch 20/22] [Batch 2000/2300] [D loss: 0.380336] [G loss: 0.192389] [ema: 0.999856] 
+[Epoch 20/22] [Batch 2100/2300] [D loss: 0.387078] [G loss: 0.171830] [ema: 0.999856] 
+[Epoch 20/22] [Batch 2200/2300] [D loss: 0.385750] [G loss: 0.187724] [ema: 0.999856] 
+[Epoch 21/22] [Batch 0/2300] [D loss: 0.437371] [G loss: 0.156711] [ema: 0.999857] 
+[Epoch 21/22] [Batch 100/2300] [D loss: 0.417502] [G loss: 0.179525] [ema: 0.999857] 
+[Epoch 21/22] [Batch 200/2300] [D loss: 0.370518] [G loss: 0.211265] [ema: 0.999857] 
+[Epoch 21/22] [Batch 300/2300] [D loss: 0.397766] [G loss: 0.166549] [ema: 0.999857] 
+[Epoch 21/22] [Batch 400/2300] [D loss: 0.341650] [G loss: 0.167620] [ema: 0.999858] 
+[Epoch 21/22] [Batch 500/2300] [D loss: 0.413806] [G loss: 0.160058] [ema: 0.999858] 
+[Epoch 21/22] [Batch 600/2300] [D loss: 0.381821] [G loss: 0.191515] [ema: 0.999858] 
+[Epoch 21/22] [Batch 700/2300] [D loss: 0.380060] [G loss: 0.188393] [ema: 0.999859] 
+[Epoch 21/22] [Batch 800/2300] [D loss: 0.425856] [G loss: 0.174204] [ema: 0.999859] 
+[Epoch 21/22] [Batch 900/2300] [D loss: 0.393871] [G loss: 0.207585] [ema: 0.999859] 
+[Epoch 21/22] [Batch 1000/2300] [D loss: 0.379984] [G loss: 0.170116] [ema: 0.999859] 
+[Epoch 21/22] [Batch 1100/2300] [D loss: 0.382414] [G loss: 0.185370] [ema: 0.999860] 
+[Epoch 21/22] [Batch 1200/2300] [D loss: 0.411895] [G loss: 0.181717] [ema: 0.999860] 
+[Epoch 21/22] [Batch 1300/2300] [D loss: 0.384626] [G loss: 0.172925] [ema: 0.999860] 
+[Epoch 21/22] [Batch 1400/2300] [D loss: 0.395910] [G loss: 0.163408] [ema: 0.999861] 
+[Epoch 21/22] [Batch 1500/2300] [D loss: 0.390850] [G loss: 0.185704] [ema: 0.999861] 
+[Epoch 21/22] [Batch 1600/2300] [D loss: 0.439670] [G loss: 0.173810] [ema: 0.999861] 
+[Epoch 21/22] [Batch 1700/2300] [D loss: 0.406640] [G loss: 0.180019] [ema: 0.999861] 
+[Epoch 21/22] [Batch 1800/2300] [D loss: 0.371077] [G loss: 0.193975] [ema: 0.999862] 
+[Epoch 21/22] [Batch 1900/2300] [D loss: 0.382623] [G loss: 0.178748] [ema: 0.999862] 
+[Epoch 21/22] [Batch 2000/2300] [D loss: 0.373862] [G loss: 0.179703] [ema: 0.999862] 
+[Epoch 21/22] [Batch 2100/2300] [D loss: 0.418532] [G loss: 0.192147] [ema: 0.999862] 
+[Epoch 21/22] [Batch 2200/2300] [D loss: 0.395526] [G loss: 0.174375] [ema: 0.999863] 
