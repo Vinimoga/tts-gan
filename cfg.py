@@ -191,6 +191,11 @@ def parse_args():
         type=str,
         default='./data',
         help='The path of data set')
+    parser.add_argument(
+        '--label_path',
+        type=str,
+        default='./label',
+        help='The path of the dataset labels')
     parser.add_argument('--init_type', type=str, default='normal',
                         choices=['normal', 'orth', 'xavier_uniform', 'false'],
                         help='The init type')
