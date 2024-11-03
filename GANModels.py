@@ -157,16 +157,35 @@ class Dis_TransformerEncoder(nn.Sequential):
 class ClassificationHead(nn.Sequential):
     def __init__(self, emb_size=100, n_classes=2):
         super().__init__()
+        '''
         self.clshead = nn.Sequential(
             Reduce('b n e -> b e', reduction='mean'),
             nn.LayerNorm(emb_size),
             nn.Linear(emb_size, n_classes)
         )
+        '''
+        self.clshead = nn.Sequential(
+            ReduceLayer(reduction='mean'),
+            nn.LayerNorm(emb_size),
+            nn.Linear(emb_size, n_classes))
+
 
     def forward(self, x):
         out = self.clshead(x)
         return out
 
+class ReduceLayer(nn.Module):
+    def __init__(self, reduction: str = 'mean'):
+        super(ReduceLayer, self).__init__()
+        self.reduction = reduction
+
+    def forward(self, x: Tensor) -> Tensor:
+        if self.reduction == 'mean':
+            return x.mean(dim=1)  # Reduz ao longo da dimensão `n`, resultando em (b, e)
+        elif self.reduction == 'sum':
+            return x.sum(dim=1)
+        else:
+            raise ValueError(f"Unsupported reduction type: {self.reduction}")
     
 class PatchEmbedding_Linear(nn.Module):
     #what are the proper parameters set here?
@@ -174,24 +193,49 @@ class PatchEmbedding_Linear(nn.Module):
         # self.patch_size = patch_size
         super().__init__()
         #change the conv2d parameters here
+        '''
         self.projection = nn.Sequential(
             Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)',s1 = 1, s2 = patch_size),
-            nn.Linear(patch_size*in_channels, emb_size)
-        )
+            nn.Linear(patch_size*in_channels, emb_size))
+        '''
+        self.projection = nn.Sequential(
+            RearrangeLayer(patch_size=patch_size, s1=1),  # Substitui o Rearrange do einops
+            nn.Linear(patch_size * in_channels, emb_size))
+        
         self.cls_token = nn.Parameter(torch.randn(1, 1, emb_size))
         self.positions = nn.Parameter(torch.randn((seq_len // patch_size) + 1, emb_size))
 
     def forward(self, x: Tensor) -> Tensor:
-        #print(x.shape)
         b, _, _, _ = x.shape
         x = self.projection(x)
-        cls_tokens = repeat(self.cls_token, '() n e -> b n e', b=b)
+        
+        #cls_tokens = repeat(self.cls_token, '() n e -> b n e', b=b)
+        cls_tokens = self.cls_token.repeat(b, 1, 1) #Personal repeat from pytorch to transfer from einops
+
         #prepend the cls token to the input
         x = torch.cat([cls_tokens, x], dim=1)
         # position
         x += self.positions
-        return x        
+        return x     
+    
+    #For use in change of Rearrange einops layer
+class RearrangeLayer(nn.Module):
+    def __init__(self, patch_size: int, s1: int = 1):
+        super(RearrangeLayer, self).__init__()
+        self.patch_size = patch_size
+        self.s1 = s1
+
+    def forward(self, x: Tensor) -> Tensor:
+        b, c, h_s1, w_s2 = x.shape
+        h, s1 = h_s1, self.s1
+        w, s2 = w_s2 // self.patch_size, self.patch_size
         
+        # Rearrange tensor
+        x = x.view(b, c, h, s1, w, s2)  # shape: (b, c, h, s1, w, s2)
+        x = x.permute(0, 2, 4, 3, 5, 1)  # shape: (b, h, w, s1, s2, c)
+        x = x.reshape(b, h * w, s1 * s2 * c)  # shape: (b, h * w, s1 * s2 * c)  
+
+        return x
         
 class Discriminator(nn.Sequential):
     def __init__(self, 
