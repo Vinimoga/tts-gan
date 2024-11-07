@@ -6,8 +6,8 @@ import math
 import numpy as np
 
 from torchvision.transforms import Compose, Resize, ToTensor
-from einops import rearrange, reduce, repeat
-from einops.layers.torch import Rearrange, Reduce
+#from einops import rearrange, reduce, repeat
+#from einops.layers.torch import Rearrange, Reduce
 from torchsummary import summary
 
 
@@ -87,9 +87,15 @@ class MultiHeadAttention(nn.Module):
         self.projection = nn.Linear(emb_size, emb_size)
 
     def forward(self, x: Tensor, mask: Tensor = None) -> Tensor:
+        '''
         queries = rearrange(self.queries(x), "b n (h d) -> b h n d", h=self.num_heads)
         keys = rearrange(self.keys(x), "b n (h d) -> b h n d", h=self.num_heads)
         values = rearrange(self.values(x), "b n (h d) -> b h n d", h=self.num_heads)
+        '''
+        queries = self.rearrange_tensor(self.queries(x),  num_heads=self.num_heads)
+        keys = self.rearrange_tensor(self.keys(x), num_heads=self.num_heads)
+        values = self.rearrange_tensor(self.values(x),  num_heads=self.num_heads)
+
         energy = torch.einsum('bhqd, bhkd -> bhqk', queries, keys)  # batch, num_heads, query_len, key_len
         if mask is not None:
             fill_value = torch.finfo(torch.float32).min
@@ -99,9 +105,30 @@ class MultiHeadAttention(nn.Module):
         att = F.softmax(energy / scaling, dim=-1)
         att = self.att_drop(att)
         out = torch.einsum('bhal, bhlv -> bhav ', att, values)
-        out = rearrange(out, "b h n d -> b n (h d)")
+        #print(f'out shape: {out.shape}')
+        #out = rearrange(out, "b h n d -> b n (h d)")
+        b, h, n, d = out.shape
+        out = out.permute(0, 2, 1, 3).reshape(b, n, h * d)
+        #print(f'out final shape: {out.shape}')
         out = self.projection(out)
         return out
+    
+    def rearrange_tensor(self, x: Tensor, num_heads: int) -> Tensor:
+        """
+        Rearrange tensor from shape (b, n, h * d) to (b, h, n, d).
+
+        Args:
+            x (Tensor): Input tensor with shape (b, n, h * d).
+            num_heads (int): Number of heads (h).
+
+        Returns:
+            Tensor: Rearranged tensor with shape (b, h, n, d).
+        """
+        b, n, hd = x.shape
+        d = hd // num_heads  # Calcula a dimensão `d` dividindo pela quantidade de cabeças
+
+        # Redimensiona para (b, n, h, d) e reorganiza para (b, h, n, d)
+        return x.view(b, n, num_heads, d).permute(0, 2, 1, 3)
 
     
 class ResidualAdd(nn.Module):
