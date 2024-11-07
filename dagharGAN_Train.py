@@ -25,8 +25,8 @@ For Each experiment change:
 max_iter = 50000
 checkpoint_number = 4
 seq_len = 60
-channels = 3
-log_dir = 'logs/daghar_all_50000_3axis_60_100'
+channels = 6
+log_dir = 'logs/daghar_all_50000_6axis_60_100'
 path = 'DAGHAR_split_25_10_all/train/'
 data_path = path + 'data/'
 classes = os.listdir(data_path)

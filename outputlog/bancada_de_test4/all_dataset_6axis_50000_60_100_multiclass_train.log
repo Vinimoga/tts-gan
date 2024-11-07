@@ -102,7 +102,7 @@ Generator(
 Discriminator(
   (0): PatchEmbedding_Linear(
     (projection): Sequential(
-      (0): Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=1, s2=15)
+      (0): RearrangeLayer()
       (1): Linear(in_features=90, out_features=50, bias=True)
     )
   )
@@ -191,7 +191,7 @@ Discriminator(
   )
   (2): ClassificationHead(
     (clshead): Sequential(
-      (0): Reduce('b n e -> b e', 'mean')
+      (0): ReduceLayer()
       (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
       (2): Linear(in_features=50, out_features=1, bias=True)
     )
@@ -201,7 +201,7 @@ DataParallel(
   (module): Discriminator(
     (0): PatchEmbedding_Linear(
       (projection): Sequential(
-        (0): Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=1, s2=15)
+        (0): RearrangeLayer()
         (1): Linear(in_features=90, out_features=50, bias=True)
       )
     )
@@ -290,7 +290,7 @@ DataParallel(
     )
     (2): ClassificationHead(
       (clshead): Sequential(
-        (0): Reduce('b n e -> b e', 'mean')
+        (0): ReduceLayer()
         (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
         (2): Linear(in_features=50, out_features=1, bias=True)
       )
@@ -307,7 +307,7 @@ Epochs between checkpoint: 6
 
 
 
-Saving checkpoint 1 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+Saving checkpoint 1 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_11_03_22_59_20/Model
 
 
 
@@ -452,7 +452,7 @@ Saving checkpoint 1 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_
 
 
 
-Saving checkpoint 2 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+Saving checkpoint 2 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_11_03_22_59_20/Model
 
 
 
@@ -597,7 +597,7 @@ Saving checkpoint 2 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_
 
 
 
-Saving checkpoint 3 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+Saving checkpoint 3 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_11_03_22_59_20/Model
 
 
 
@@ -742,7 +742,7 @@ Saving checkpoint 3 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_
 
 
 
-Saving checkpoint 4 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_2024_10_30_14_19_10/Model
+Saving checkpoint 4 in logs/daghar_all_50000_6axis_60_100/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_11_03_22_59_20/Model
 
 
 
