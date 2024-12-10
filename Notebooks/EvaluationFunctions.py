@@ -134,7 +134,6 @@ class DagharUniclassEvaluation():
             "#33FFF6"   # Ciano
              ]
 
-        
         print(f'saving files in {self.save_path}')
         if self.show:
             self.show_raw_data([self.original_data, self.syn_data], c, 
@@ -142,20 +141,20 @@ class DagharUniclassEvaluation():
             self.show_raw_data([self.original_fft_data, self.syn_fft_data], c, 
                                title=f'{self.class_name} Frequency Domain Raw Data for {self.iter} iter')
 
-
         self.tsne_time_data = self.TSNE_visualization(self.original_data, self.syn_data, 
                                 title=f'Time domain tSNE: {self.class_name} for {self.iter} iter',
                                 show=self.show)
         self.tsne_frequency_data = self.TSNE_visualization(self.original_fft_data, self.syn_fft_data, 
                                 title=f'Frequency domain tSNE: {self.class_name} for {self.iter} iter', 
                                 show=self.show)   
-        
+        '''
         if sample_size == 'all':
             #print(len(self.original_set))
             self.save_samples(sample_size = len(self.original_set))
         else:
             self.save_samples(sample_size=sample_size)
-
+        '''
+        
     def extract_dataloader(self, dataloader, l = False):
         data = []
         label_data = []

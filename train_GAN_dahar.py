@@ -208,7 +208,7 @@ def main_worker(gpu, ngpus_per_node, args):
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
     if args.dataset == 'daghar':
         data_set = daghar_load_dataset_with_label(class_name=args.class_name, seq_len = args.seq_len, data_path = args.data_path, label_path = args.label_path, channels=args.channels)
-        train_set, test_set = train_test_split(data_set, train_size=0.8)
+        train_set, test_set = train_test_split(data_set[:][0], train_size=0.8)
         train_set, test_set = np.array(train_set), np.array(test_set)
         train_loader = data.DataLoader(data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)

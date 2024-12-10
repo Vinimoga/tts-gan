@@ -22,7 +22,7 @@ For Each experiment change:
     -exp_name : for the name of the experiment that will be saaved in log, along with the date
 '''
 
-max_iter = 50000
+max_iter = 1
 checkpoint_number = 4
 seq_len = 60
 channels = 6
@@ -40,7 +40,7 @@ default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -
                 --g_depth 5,4,2 --dropout 0 --latent_dim 100 --gf_dim 1024 --num_workers 6 \
                 --g_lr 0.0001 --d_lr 0.0003 --optimizer adam --loss lsgan --wd 1e-3 --beta1 0.9 \
                 --beta2 0.999 --phi 1 --batch_size 16 --num_eval_imgs 50000 --init_type xavier_uniform \
-                --n_critic 1 --val_freq 20 --print_freq 100 --grow_steps 0 0 --fade_in 0 --patch_size 2 \
+                --n_critic 1 --val_freq 20 --print_freq 1000 --grow_steps 0 0 --fade_in 0 --patch_size 2 \
                 --ema_kimg 500 --ema_warmup 0.1 --ema 0.9999 --diff_aug translation,cutout,color"
 
 
@@ -58,6 +58,8 @@ for i, class_name in enumerate([s for s in classes]):
     print('\n----------------------------------------------------------------------------------------------------', flush=True)
     print('\n Starting individual training', flush=True)
     print(f'{c} training', flush=True)
+    print(f'Data path: {data_path + classes[i]}',flush=True)
+    print(f'Label path: {label_path[i]}')
     print('----------------------------------------------------------------------------------------------------', flush=True)
 
     os.system(f'{default_string}' + f' --class_name {c}' + f' --seq_len {seq_len}'\
