@@ -1,0 +1,402 @@
+
+ Starting training
+Total of classes being trained: 1
+
+['UCI_DAGHAR_Multiclass.csv']
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+ Starting individual training
+UCI_DAGHAR_Multiclass training
+Data path: DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv
+Label path: DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv
+----------------------------------------------------------------------------------------------------
+Generator(
+  (l1): Linear(in_features=100, out_features=600, bias=True)
+  (blocks): Gen_TransformerEncoder(
+    (0): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (1): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (2): Gen_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=10, out_features=10, bias=True)
+            (queries): Linear(in_features=10, out_features=10, bias=True)
+            (values): Linear(in_features=10, out_features=10, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=10, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((10,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=10, out_features=40, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=40, out_features=10, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+  )
+  (deconv): Sequential(
+    (0): Conv2d(10, 6, kernel_size=(1, 1), stride=(1, 1))
+  )
+)
+Discriminator(
+  (0): PatchEmbedding_Linear(
+    (projection): Sequential(
+      (0): RearrangeLayer()
+      (1): Linear(in_features=90, out_features=50, bias=True)
+    )
+  )
+  (1): Dis_TransformerEncoder(
+    (0): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (1): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+    (2): Dis_TransformerEncoderBlock(
+      (0): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): MultiHeadAttention(
+            (keys): Linear(in_features=50, out_features=50, bias=True)
+            (queries): Linear(in_features=50, out_features=50, bias=True)
+            (values): Linear(in_features=50, out_features=50, bias=True)
+            (att_drop): Dropout(p=0.5, inplace=False)
+            (projection): Linear(in_features=50, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+      (1): ResidualAdd(
+        (fn): Sequential(
+          (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+          (1): FeedForwardBlock(
+            (0): Linear(in_features=50, out_features=200, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.5, inplace=False)
+            (3): Linear(in_features=200, out_features=50, bias=True)
+          )
+          (2): Dropout(p=0.5, inplace=False)
+        )
+      )
+    )
+  )
+  (2): ClassificationHead(
+    (clshead): Sequential(
+      (0): ReduceLayer()
+      (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+      (2): Linear(in_features=50, out_features=1, bias=True)
+    )
+  )
+)
+DataParallel(
+  (module): Discriminator(
+    (0): PatchEmbedding_Linear(
+      (projection): Sequential(
+        (0): RearrangeLayer()
+        (1): Linear(in_features=90, out_features=50, bias=True)
+      )
+    )
+    (1): Dis_TransformerEncoder(
+      (0): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+      (1): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+      (2): Dis_TransformerEncoderBlock(
+        (0): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): MultiHeadAttention(
+              (keys): Linear(in_features=50, out_features=50, bias=True)
+              (queries): Linear(in_features=50, out_features=50, bias=True)
+              (values): Linear(in_features=50, out_features=50, bias=True)
+              (att_drop): Dropout(p=0.5, inplace=False)
+              (projection): Linear(in_features=50, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+        (1): ResidualAdd(
+          (fn): Sequential(
+            (0): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+            (1): FeedForwardBlock(
+              (0): Linear(in_features=50, out_features=200, bias=True)
+              (1): GELU(approximate='none')
+              (2): Dropout(p=0.5, inplace=False)
+              (3): Linear(in_features=200, out_features=50, bias=True)
+            )
+            (2): Dropout(p=0.5, inplace=False)
+          )
+        )
+      )
+    )
+    (2): ClassificationHead(
+      (clshead): Sequential(
+        (0): ReduceLayer()
+        (1): LayerNorm((50,), eps=1e-05, elementwise_affine=True)
+        (2): Linear(in_features=50, out_features=1, bias=True)
+      )
+    )
+  )
+)
+UCI_DAGHAR_Multiclass
+daghar
+return single class data and labels, class is UCI_DAGHAR_Multiclass
+data shape is (36788, 6, 1, 60)
+label shape is (36788,)
+2300
+Epochs between checkpoint: 6
+
+
+
+Saving checkpoint 1 in logs/review/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_12_16_14_27_57/Model
+
+
+
+[Epoch 0/22] [Batch 0/2300] [D loss: 2.050287] [G loss: 0.614858] [ema: 0.000000] 
+[Epoch 0/22] [Batch 1000/2300] [D loss: 0.476070] [G loss: 0.128207] [ema: 0.993092] 
+[Epoch 0/22] [Batch 2000/2300] [D loss: 0.415139] [G loss: 0.180941] [ema: 0.996540] 
+[Epoch 1/22] [Batch 0/2300] [D loss: 0.460576] [G loss: 0.167030] [ema: 0.996991] 
+[Epoch 1/22] [Batch 1000/2300] [D loss: 0.386775] [G loss: 0.174197] [ema: 0.997902] 
+[Epoch 1/22] [Batch 2000/2300] [D loss: 0.419688] [G loss: 0.171504] [ema: 0.998389] 
+[Epoch 2/22] [Batch 0/2300] [D loss: 0.398595] [G loss: 0.165122] [ema: 0.998494] 
+[Epoch 2/22] [Batch 1000/2300] [D loss: 0.395221] [G loss: 0.173173] [ema: 0.998763] 
+[Epoch 2/22] [Batch 2000/2300] [D loss: 0.364503] [G loss: 0.178172] [ema: 0.998950] 
+[Epoch 3/22] [Batch 0/2300] [D loss: 0.405129] [G loss: 0.179424] [ema: 0.998996] 
+[Epoch 3/22] [Batch 1000/2300] [D loss: 0.370387] [G loss: 0.192799] [ema: 0.999123] 
+[Epoch 3/22] [Batch 2000/2300] [D loss: 0.365170] [G loss: 0.180540] [ema: 0.999221] 
+[Epoch 4/22] [Batch 0/2300] [D loss: 0.422448] [G loss: 0.181843] [ema: 0.999247] 
+[Epoch 4/22] [Batch 1000/2300] [D loss: 0.413858] [G loss: 0.188022] [ema: 0.999321] 
+[Epoch 4/22] [Batch 2000/2300] [D loss: 0.437027] [G loss: 0.161731] [ema: 0.999381] 
+[Epoch 5/22] [Batch 0/2300] [D loss: 0.379073] [G loss: 0.189587] [ema: 0.999397] 
+[Epoch 5/22] [Batch 1000/2300] [D loss: 0.399250] [G loss: 0.168052] [ema: 0.999446] 
+[Epoch 5/22] [Batch 2000/2300] [D loss: 0.426725] [G loss: 0.162017] [ema: 0.999487] 
+
+
+
+Saving checkpoint 2 in logs/review/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_12_16_14_27_57/Model
+
+
+
+[Epoch 6/22] [Batch 0/2300] [D loss: 0.429953] [G loss: 0.173728] [ema: 0.999498] 
+[Epoch 6/22] [Batch 1000/2300] [D loss: 0.373000] [G loss: 0.190515] [ema: 0.999532] 
+[Epoch 6/22] [Batch 2000/2300] [D loss: 0.367979] [G loss: 0.200692] [ema: 0.999561] 
+[Epoch 7/22] [Batch 0/2300] [D loss: 0.381017] [G loss: 0.208742] [ema: 0.999570] 
+[Epoch 7/22] [Batch 1000/2300] [D loss: 0.413548] [G loss: 0.174837] [ema: 0.999595] 
+[Epoch 7/22] [Batch 2000/2300] [D loss: 0.372501] [G loss: 0.172513] [ema: 0.999617] 
+[Epoch 8/22] [Batch 0/2300] [D loss: 0.369085] [G loss: 0.195033] [ema: 0.999623] 
+[Epoch 8/22] [Batch 1000/2300] [D loss: 0.402789] [G loss: 0.183639] [ema: 0.999643] 
+[Epoch 8/22] [Batch 2000/2300] [D loss: 0.369774] [G loss: 0.182481] [ema: 0.999660] 
+[Epoch 9/22] [Batch 0/2300] [D loss: 0.391750] [G loss: 0.192988] [ema: 0.999665] 
+[Epoch 9/22] [Batch 1000/2300] [D loss: 0.439651] [G loss: 0.185526] [ema: 0.999681] 
+[Epoch 9/22] [Batch 2000/2300] [D loss: 0.408947] [G loss: 0.169608] [ema: 0.999695] 
+[Epoch 10/22] [Batch 0/2300] [D loss: 0.426837] [G loss: 0.184215] [ema: 0.999699] 
+[Epoch 10/22] [Batch 1000/2300] [D loss: 0.353727] [G loss: 0.205038] [ema: 0.999711] 
+[Epoch 10/22] [Batch 2000/2300] [D loss: 0.414634] [G loss: 0.164755] [ema: 0.999723] 
+[Epoch 11/22] [Batch 0/2300] [D loss: 0.357451] [G loss: 0.199329] [ema: 0.999726] 
+[Epoch 11/22] [Batch 1000/2300] [D loss: 0.393931] [G loss: 0.183566] [ema: 0.999736] 
+[Epoch 11/22] [Batch 2000/2300] [D loss: 0.415186] [G loss: 0.187471] [ema: 0.999746] 
+
+
+
+Saving checkpoint 3 in logs/review/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_12_16_14_27_57/Model
+
+
+
+[Epoch 12/22] [Batch 0/2300] [D loss: 0.403456] [G loss: 0.188100] [ema: 0.999749] 
+[Epoch 12/22] [Batch 1000/2300] [D loss: 0.408149] [G loss: 0.170264] [ema: 0.999758] 
+[Epoch 12/22] [Batch 2000/2300] [D loss: 0.436213] [G loss: 0.171679] [ema: 0.999766] 
+[Epoch 13/22] [Batch 0/2300] [D loss: 0.402013] [G loss: 0.192404] [ema: 0.999768] 
+[Epoch 13/22] [Batch 1000/2300] [D loss: 0.422393] [G loss: 0.169512] [ema: 0.999776] 
+[Epoch 13/22] [Batch 2000/2300] [D loss: 0.437222] [G loss: 0.158471] [ema: 0.999783] 
+[Epoch 14/22] [Batch 0/2300] [D loss: 0.391550] [G loss: 0.177242] [ema: 0.999785] 
+[Epoch 14/22] [Batch 1000/2300] [D loss: 0.439732] [G loss: 0.173956] [ema: 0.999791] 
+[Epoch 14/22] [Batch 2000/2300] [D loss: 0.430658] [G loss: 0.174314] [ema: 0.999797] 
+[Epoch 15/22] [Batch 0/2300] [D loss: 0.387993] [G loss: 0.185953] [ema: 0.999799] 
+[Epoch 15/22] [Batch 1000/2300] [D loss: 0.437130] [G loss: 0.187366] [ema: 0.999805] 
+[Epoch 15/22] [Batch 2000/2300] [D loss: 0.369513] [G loss: 0.177513] [ema: 0.999810] 
+[Epoch 16/22] [Batch 0/2300] [D loss: 0.449645] [G loss: 0.168627] [ema: 0.999812] 
+[Epoch 16/22] [Batch 1000/2300] [D loss: 0.432439] [G loss: 0.166746] [ema: 0.999817] 
+[Epoch 16/22] [Batch 2000/2300] [D loss: 0.426723] [G loss: 0.168533] [ema: 0.999821] 
+[Epoch 17/22] [Batch 0/2300] [D loss: 0.393488] [G loss: 0.176000] [ema: 0.999823] 
+[Epoch 17/22] [Batch 1000/2300] [D loss: 0.420030] [G loss: 0.171459] [ema: 0.999827] 
+[Epoch 17/22] [Batch 2000/2300] [D loss: 0.374390] [G loss: 0.166674] [ema: 0.999831] 
+
+
+
+Saving checkpoint 4 in logs/review/UCI_DAGHAR_Multiclass_50000_D_60_6axis_2024_12_16_14_27_57/Model
+
+
+
+[Epoch 18/22] [Batch 0/2300] [D loss: 0.394165] [G loss: 0.181399] [ema: 0.999833] 
+[Epoch 18/22] [Batch 1000/2300] [D loss: 0.458221] [G loss: 0.190196] [ema: 0.999837] 
+[Epoch 18/22] [Batch 2000/2300] [D loss: 0.413646] [G loss: 0.166737] [ema: 0.999840] 
+[Epoch 19/22] [Batch 0/2300] [D loss: 0.394155] [G loss: 0.179271] [ema: 0.999841] 
+[Epoch 19/22] [Batch 1000/2300] [D loss: 0.431657] [G loss: 0.154555] [ema: 0.999845] 
+[Epoch 19/22] [Batch 2000/2300] [D loss: 0.441932] [G loss: 0.170122] [ema: 0.999848] 
+[Epoch 20/22] [Batch 0/2300] [D loss: 0.375016] [G loss: 0.185862] [ema: 0.999849] 
+[Epoch 20/22] [Batch 1000/2300] [D loss: 0.403204] [G loss: 0.178553] [ema: 0.999853] 
+[Epoch 20/22] [Batch 2000/2300] [D loss: 0.380336] [G loss: 0.192389] [ema: 0.999856] 
+[Epoch 21/22] [Batch 0/2300] [D loss: 0.437371] [G loss: 0.156711] [ema: 0.999857] 
+[Epoch 21/22] [Batch 1000/2300] [D loss: 0.379984] [G loss: 0.170116] [ema: 0.999859] 
+[Epoch 21/22] [Batch 2000/2300] [D loss: 0.373862] [G loss: 0.179703] [ema: 0.999862] 

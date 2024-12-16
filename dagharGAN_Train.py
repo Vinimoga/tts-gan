@@ -22,11 +22,11 @@ For Each experiment change:
     -exp_name : for the name of the experiment that will be saaved in log, along with the date
 '''
 
-max_iter = 1
+max_iter = 50000
 checkpoint_number = 4
 seq_len = 60
 channels = 6
-log_dir = 'logs/daghar_all_50000_6axis_60_100'
+log_dir = 'logs/review/'
 path = 'DAGHAR_split_25_10_all/train/'
 data_path = path + 'data/'
 classes = os.listdir(data_path)
