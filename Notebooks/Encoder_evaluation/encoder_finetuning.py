@@ -27,10 +27,12 @@ import os
 #############################################################################
 
 
-def complete_TTSGAN_training(data_path: str,
+def complete_TTSGAN_encoder_evaluation(data_path: str,
                              checkpoint_path: str,
                              root_log_dir: str,
                              execution_id: int,
+                             is_basegan: int,
+                             appendice: str = '',
                              num_classes: int = 6,
                              max_epochs: int = 100):
     
@@ -43,28 +45,29 @@ def complete_TTSGAN_training(data_path: str,
         features_as_channels=True,
         cast_to="float32",
         batch_size=64,
-        num_workers=1)
+        num_workers=5)
 
-    ckpt = torch.load(f=checkpoint_path)
+    ckpt = torch.load(f=checkpoint_path + appendice)
 
     # Get state dict
-    ###############################33state_dict = ckpt['state_dict']
-    gen_state_dict = ckpt['gen_state_dict']
-    dis_state_dict = ckpt['dis_state_dict']
-    '''
-    # Separate GAN generator and discriminatorstate_dict
-    gen_state_dict = {key: value for key, value in state_dict.items() if key.startswith('gen')}
-    dis_state_dict = {key: value for key, value in state_dict.items() if key.startswith('dis')}
+    if is_basegan:
+        state_dict = ckpt['state_dict']
+        # Separate GAN generator and discriminatorstate_dict
+        gen_state_dict = {key: value for key, value in state_dict.items() if key.startswith('gen')}
+        dis_state_dict = {key: value for key, value in state_dict.items() if key.startswith('dis')}
 
-    # Remove prefix 'gen.' e 'dis.' from keys
-    gen_state_dict = {key[len('gen.') :]: value for key, value in gen_state_dict.items()}
-    dis_state_dict = {key[len('dis.') :]: value for key, value in dis_state_dict.items()}
-    '''
+        # Remove prefix 'gen.' e 'dis.' from keys
+        gen_state_dict = {key[len('gen.') :]: value for key, value in gen_state_dict.items()}
+        dis_state_dict = {key[len('dis.') :]: value for key, value in dis_state_dict.items()}
+
+    else:
+        gen_state_dict = ckpt['gen_state_dict']
+        dis_state_dict = ckpt['dis_state_dict']
+
     #save dictionary
     save_dict = {'gen_state_dict': gen_state_dict, 'dis_state_dict': dis_state_dict}
     torch.save(save_dict, "gan_dict.pth")
-
-
+    
     backbone = TTSGAN_Encoder(in_channels=6, seq_len=60)
 
     # Loading encoder from checkpoint
@@ -79,7 +82,8 @@ def complete_TTSGAN_training(data_path: str,
 
     # Obtem o primeiro batch de treino (64 amostras de 6x60)
     first_batch = next(iter(train_data_loader))
-
+    
+    #print(f'first batch: {first_batch}')
     X, y = first_batch
 
     embeddings = backbone(X)
