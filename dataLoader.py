@@ -51,7 +51,7 @@ from tabulate import tabulate # for verbose tables
 
 #credit https://stackoverflow.com/questions/9419162/download-returned-zip-file-from-url
 #many other methods I tried failed to download the file properly
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, random_split
 import torch
 
 #data augmentation
@@ -369,7 +369,6 @@ class daghar_load_dataset(Dataset):
         
     def __getitem__(self, idx):
         return self.class_data[idx], self.class_labels[idx]
-    
 
 class daghar_load_dataset_with_label(Dataset):
     '''
@@ -390,35 +389,37 @@ class daghar_load_dataset_with_label(Dataset):
         seq_len: int = 30,
         data_path: str = 'DAGHAR_GANs/',
         label_path: str = None,
-        channels: int = 3):
+        channels: int = 3,
+        percentage: float = 1.0,
+        seed: int = 42):
 
         self.seq_len = seq_len
-
         self.data_path = data_path
         self.label_path = label_path
         self.class_name = class_name
+        self.percentage = percentage
+        self.seed: int = None
 
+        # load data
         self.class_data, self.class_labels = self.load_dataset(seq_len=self.seq_len)
-        #print(self.class_data.shape)
+
+        # rearrange data to get only the channels selected (max 6)
         self.class_data = self.class_data[:, :, :channels]
-        #print(self.class_data.shape)
 
-        self.class_data = self.class_data.transpose(0, 2, 1)
+        # subsample and shuffle all data
+        self.subsample_data()
 
-        self.class_data = np.expand_dims(self.class_data, axis= 2)
+        # Adjust data shape to be compatible with model
+        self.class_data = self.class_data.transpose(0, 2, 1)  # (N, C, L)
+        self.class_data = np.expand_dims(self.class_data, axis=2)  # (N, C, 1, L)
 
-        print(f'return single class data and labels, class is {self.class_name}')
-        print(f'data shape is {self.class_data.shape}')
-        print(f'label shape is {self.class_labels.shape}')
+        print(f'Returning single-class data and labels, class: {self.class_name}')
+        print(f'Data shape: {self.class_data.shape}')
+        print(f'Label shape: {self.class_labels.shape}')
         
-
-    def load_dataset(self, seq_len = 30):
-        '''
-        Search for the data directory and get the entire data, the same for the labels
-        creates a list by appending the label and the data separetely and return them
-        '''
+    def load_dataset(self, seq_len=30):
+        """Load and process the csv files"""
         my_data = np.genfromtxt(self.data_path, delimiter=',')
-        
         labels = np.genfromtxt(self.label_path, delimiter=',', dtype=str)
         labels = np.char.strip(labels, '"').astype(int).reshape(-1, seq_len)
         labels = np.apply_along_axis(lambda x: np.bincount(x).argmax(), axis=1, arr=labels)
@@ -428,15 +429,28 @@ class daghar_load_dataset_with_label(Dataset):
         temp = []
         for i, data in enumerate(my_data):
             temp.append(data)
-            if len(temp)%seq_len == 0 and i!=0:
+            if len(temp) % seq_len == 0 and i != 0:
                 class_data.append(temp)
-                class_label.append(labels[i//seq_len])
+                class_label.append(labels[i // seq_len])
                 temp = []
-  
-        return np.array(class_data), labels    
+
+        return np.array(class_data), np.array(class_label)
     
+    def subsample_data(self):
+        """choose a percentage of the data to keep and shuffle it"""
+        if self.seed:
+            np.random.seed(self.seed) # reproducibility
+        total_samples = len(self.class_labels)
+        num_samples = int(self.percentage * total_samples)  # Número de amostras a manter
+
+        indices = np.random.permutation(total_samples)[:num_samples]
+        
+        # Selection of the data
+        self.class_data = self.class_data[indices]
+        self.class_labels = self.class_labels[indices]
+
     def __len__(self):
-            return len(self.class_labels)
+        return len(self.class_labels)
 
         
     def __getitem__(self, idx):

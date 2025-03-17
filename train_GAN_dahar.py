@@ -207,10 +207,10 @@ def main_worker(gpu, ngpus_per_node, args):
         test_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Test', single_class = True, class_name = args.class_name)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
     if args.dataset == 'daghar':
-        data_set = daghar_load_dataset_with_label(class_name=args.class_name, seq_len = args.seq_len, data_path = args.data_path, label_path = args.label_path, channels=args.channels)
-        train_set, test_set = train_test_split(data_set[:][0], train_size=0.8)
+        train_data_set = daghar_load_dataset_with_label(class_name=args.class_name, seq_len = args.seq_len, data_path = args.data_path, label_path = args.label_path, channels=args.channels, percentage= 0.8) #Change the percentage if you want
+        train_set, test_set = train_test_split(train_data_set[:][0], train_size=0.8)
         train_set, test_set = np.array(train_set), np.array(test_set)
-        train_loader = data.DataLoader(data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+        train_loader = data.DataLoader(train_data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
     else:
         raise NotImplementedError('{} unknown dataset'.format(args.init_type))
@@ -313,7 +313,7 @@ def main_worker(gpu, ngpus_per_node, args):
 
 
         train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,fixed_z, lr_schedulers)
-        
+        #print(dis_net.module.state_dict()['0.cls_token'][0][0][0:10])
         if args.rank == 0 and args.show:
             backup_param = copy_params(gen_net)
             load_params(gen_net, gen_avg_param, args, mode="cpu")
