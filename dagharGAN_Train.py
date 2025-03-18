@@ -10,7 +10,6 @@ def parse_args():
     parser.add_argument('--node', type=str, default="0015")
     parser.add_argument('--t_checkpoint', type=int, default=1000)
     parser.add_argument('--seed', type=int, default=42)
-    parser.add_argument('--gpu', type=int, default=0)
     opt = parser.parse_args()
 
     return opt
@@ -44,7 +43,7 @@ default_string = f"CUDA_VISIBLE_DEVICES=0 python train_GAN_dahar.py -gen_bs 16 -
                 --beta2 0.999 --phi 1 --batch_size 64 --num_eval_imgs 50000 --init_type xavier_uniform \
                 --n_critic 1 --val_freq 20 --print_freq 1000 --grow_steps 0 0 --fade_in 0 --patch_size 2 \
                 --ema_kimg 500 --ema_warmup 0.1 --ema 0.9999 --diff_aug translation,cutout,color \
-                --random_seed {args.seed} --gpu {args.gpu}"
+                --random_seed {args.seed}"
 
 #batch_size = 16
 

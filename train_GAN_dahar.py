@@ -299,7 +299,7 @@ def main_worker(gpu, ngpus_per_node, args):
         if epoch % t_checkpoint == 0:
             t += 1
             print('\n\n')
-            save_checkpoint({'gen_state_dict': gen_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
+            save_checkpoint({'gen_state_dict': gen_net.module.state_dict(), 'dis_state_dict': dis_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
             print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
             print('\n\n')
         

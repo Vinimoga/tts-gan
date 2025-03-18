@@ -3,6 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.patches as mpatches
+from matplotlib.colors import ListedColormap
 import numpy as np
 from sklearn.manifold import TSNE
 from lightning.pytorch.callbacks import Callback
@@ -42,15 +43,36 @@ class TsneGeneratorCallback(Callback):
         image_paths = [os.path.join(self.image_save_dir, file_name) for file_name in image_files if file_name.endswith('.png')]
 
         create_gif(image_paths, self.image_save_dir, duration=200)
+
+###################################################################################################################333
+
+    def on_train_epoch_end(self, trainer, pl_module):
+
+
+
+
+
+            # Create custom legend with assigned colors
+            handles = [mpatches.Patch(color=self.colors[i], label=self.SAC[i]) for i in range(len(self.SAC))]
+            plt.legend(handles=handles, title="Class Labels", loc='lower right')
+
+            # Save image
+            tsne_image_path = os.path.join(self.image_save_dir, f'tsne_epoch_{trainer.current_epoch}.png')
+            plt.savefig(tsne_image_path)
+            plt.close()
 class TsneEncoderCallback(Callback):
-    def __init__(self, image_save_dir, random_state=42, points=1000):
+    def __init__(self, image_save_dir, random_state=42, points=1000, flatten=False):
         super().__init__()
         self.image_save_dir = image_save_dir
         self.random_state = random_state
         self.points = points
+        self.flatten = flatten
         self.SAC = ['Sit', 'Stand', 'Walk', 'Upstairs', 'Downstairs', 'Run']
         if not os.path.exists(self.image_save_dir):
             os.makedirs(self.image_save_dir)
+
+        self.colors = ['red', 'blue', 'green', 'orange', 'pink', 'brown']
+        self.cmap = ListedColormap(self.colors)
 
     def on_train_epoch_end(self, trainer, pl_module):
         with torch.no_grad():
@@ -74,22 +96,27 @@ class TsneEncoderCallback(Callback):
             # Extract features using the discriminator's backbone
             features = pl_module.dis.backbone(all_samples).cpu().detach().numpy()
 
+            if self.flatten:
+                features = features.reshape(features.shape[0], -1)
+
             # Apply t-SNE
             tsne = TSNE(n_components=2, random_state=self.random_state)
             transformed = tsne.fit_transform(features)
 
-            cmap = cm.get_cmap("viridis", len(self.SAC))
-            norm = plt.Normalize(vmin=min(all_labels), vmax=max(all_labels))
+            # Get unique labels and assign index-based colors
+            unique_labels = np.unique(all_labels)
+            label_to_index = {label: idx for idx, label in enumerate(unique_labels)}
+            color_indices = np.array([label_to_index[label] for label in all_labels])
 
             # Plot results
             plt.figure(figsize=(8, 6))
-            scatter = plt.scatter(transformed[:, 0], transformed[:, 1], c=all_labels, cmap="viridis", alpha=0.7)
+            scatter = plt.scatter(transformed[:, 0], transformed[:, 1], c=color_indices, cmap=self.cmap, alpha=0.7)
             plt.xlabel("t-SNE Component 1")
             plt.ylabel("t-SNE Component 2")
             plt.title(f't-SNE of Generated Images - Epoch {trainer.current_epoch}')
 
-            handles = [mpatches.Patch(color=cmap(norm(i)), label=label) for i, label in enumerate(self.SAC)]
-
+            # Create custom legend with assigned colors
+            handles = [mpatches.Patch(color=self.colors[i], label=self.SAC[i]) for i in range(len(self.SAC))]
             plt.legend(handles=handles, title="Class Labels", loc='lower right')
 
             # Save image
