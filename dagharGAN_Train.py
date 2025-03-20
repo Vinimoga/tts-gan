@@ -23,11 +23,11 @@ For Each experiment change:
     -exp_name : for the name of the experiment that will be saaved in log, along with the date
 '''
 
-max_iter = 137694 #300 épocas: 137694 
+max_iter = 10000 #300 épocas: 137694 
 checkpoint_number = 4
 seq_len = 60
 channels = 6
-log_dir = 'logs/minerva/'
+log_dir = 'logs/eval_different_constructions/'
 path = '../DAGHAR_split_25_10_all/train/'
 data_path = path + 'data/'
 classes = os.listdir(data_path)

@@ -6,7 +6,11 @@ import cfg
 # import models_search
 # import datasets
 from dataLoader import *
-from GANModels import * 
+#from GANModels import * 
+#from GANModelsOriginal import *
+from minerva.models.nets.time_series.gans import TTSGAN_Generator as Generator
+from minerva.models.nets.time_series.gans import TTSGAN_Discriminator as Discriminator
+
 from functions import train, train_d, validate, save_samples, LinearLrDecay, load_params, copy_params, cur_stages
 from utils.utils import set_log_dir, save_checkpoint, create_logger
 # from utils.inception_score import _init_inception
@@ -74,6 +78,7 @@ def main():
         main_worker(args.gpu, ngpus_per_node, args)
         
 def main_worker(gpu, ngpus_per_node, args):
+    lista = [] #apagar
     args.gpu = gpu
     
     if args.gpu is not None:
@@ -115,9 +120,9 @@ def main_worker(gpu, ngpus_per_node, args):
 
     # import network
     
-    gen_net = Generator(seq_len=args.seq_len, channels=args.channels)
+    gen_net = Generator(seq_len=args.seq_len, channels=args.channels) #Generator_original
     print(gen_net)
-    dis_net = Discriminator(seq_len=args.seq_len, in_channels=args.channels)
+    dis_net = Discriminator(seq_len=args.seq_len, channels=args.channels) #Discriminator_original
     print(dis_net)
     if not torch.cuda.is_available():
         print('using CPU, this will be slow')
@@ -302,18 +307,12 @@ def main_worker(gpu, ngpus_per_node, args):
             save_checkpoint({'gen_state_dict': gen_net.module.state_dict(), 'dis_state_dict': dis_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
             print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
             print('\n\n')
-        
-       # if epoch > 9800 and epoch % (args.t_checkpoint/10) == 0:
 
-       #     t += 1
-       #     print('\n\n\n')
-       #     save_checkpoint({'gen_state_dict': gen_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_obs_checkpoint")
-       #     print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
-       #     print('\n\n\n')
-
-
+        #print(dis_net.module.state_dict()['backbone.0.cls_token'][0][0][0:10]) #to see if it is the same in every move
+        #lista.append(dis_net.module.state_dict()['backbone.0.cls_token'].cpu().detach().numpy())
         train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,fixed_z, lr_schedulers)
-        #print(dis_net.module.state_dict()['0.cls_token'][0][0][0:10])
+
+
         if args.rank == 0 and args.show:
             backup_param = copy_params(gen_net)
             load_params(gen_net, gen_avg_param, args, mode="cpu")
@@ -366,7 +365,9 @@ def main_worker(gpu, ngpus_per_node, args):
             'fixed_z': fixed_z
         }, is_best, args.path_helper['ckpt_path'], filename="checkpoint")
         del avg_gen_net
-        
+    #np.array(lista)
+    #np.save('lista3', lista)
+
 def gen_plot(gen_net, epoch, class_name):
     """Create a pyplot plot and save to buffer."""
     synthetic_data = [] 
