@@ -16,6 +16,7 @@ from imageio import imsave
 from utils.utils import make_grid, save_image
 from tqdm import tqdm
 import cv2
+import random
 
 # from utils.fid_score import calculate_fid_given_paths
 from utils.torch_fid_score import get_fid
@@ -220,6 +221,8 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
         # Sample noise as generator input
         z = torch.cuda.FloatTensor(np.random.normal(0, 1, (imgs.shape[0], args.latent_dim))).cuda(args.gpu, non_blocking=True)
 
+        #print(f"generator random weight: {gen_net.state_dict()['module.blocks.1.0.fn.1.keys.weight'][0]}")#################################################################################################################################################################################################
+        #print(f"discriminator random weight: {dis_net.state_dict()['module.backbone.1.2.0.fn.1.queries.weight'][0]}")######################################################################################################################################################################################
         # ---------------------
         #  Train Discriminator
         # ---------------------
@@ -574,3 +577,10 @@ def copy_params(model, mode='cpu'):
     else:
         flatten = deepcopy(list(p.data for p in model.parameters()))
     return flatten
+
+def set_seed(seed: int = 42):  
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)

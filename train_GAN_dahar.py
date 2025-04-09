@@ -11,8 +11,12 @@ from dataLoader import *
 from minerva.models.nets.time_series.gans import TTSGAN_Generator as Generator
 from minerva.models.nets.time_series.gans import TTSGAN_Discriminator as Discriminator
 
-from functions import train, train_d, validate, save_samples, LinearLrDecay, load_params, copy_params, cur_stages
+from functions import train, train_d, validate, save_samples, LinearLrDecay, load_params, copy_params, cur_stages, set_seed
 from utils.utils import set_log_dir, save_checkpoint, create_logger
+
+import csv
+import os
+
 # from utils.inception_score import _init_inception
 # from utils.fid_score import create_inception_graph, check_or_download_inception
 
@@ -78,7 +82,6 @@ def main():
         main_worker(args.gpu, ngpus_per_node, args)
         
 def main_worker(gpu, ngpus_per_node, args):
-    lista = [] #apagar
     args.gpu = gpu
     
     if args.gpu is not None:
@@ -119,10 +122,10 @@ def main_worker(gpu, ngpus_per_node, args):
             nn.init.constant_(m.bias.data, 0.0)
 
     # import network
-    
-    gen_net = Generator(seq_len=args.seq_len, channels=args.channels) #Generator_original
+    #set_seed(args.random_seed)
+    gen_net = Generator(seq_len=args.seq_len, channels=args.channels, unsqueeze=False) #Generator_original
     print(gen_net)
-    dis_net = Discriminator(seq_len=args.seq_len, channels=args.channels) #Discriminator_original
+    dis_net = Discriminator(seq_len=args.seq_len, channels=args.channels, unsqueeze=False) #Discriminator_original
     print(dis_net)
     if not torch.cuda.is_available():
         print('using CPU, this will be slow')
@@ -310,6 +313,10 @@ def main_worker(gpu, ngpus_per_node, args):
 
         #print(dis_net.module.state_dict()['backbone.0.cls_token'][0][0][0:10]) #to see if it is the same in every move
         #lista.append(dis_net.module.state_dict()['backbone.0.cls_token'].cpu().detach().numpy())
+        #print(f"generator random weight: {gen_net.state_dict()['module.blocks.1.0.fn.1.keys.weight'][0]}")#################################################################################################################################################################################################
+        #print(f"discriminator random weight: {dis_net.state_dict()['module.backbone.1.2.0.fn.1.queries.weight'][0]}")######################################################################################################################################################################################
+        
+        #log_learning_rates(csv_filename='Projetos/tts-gan/pindamonhamgaba', gen_optimizer=gen_optimizer, dis_optimizer=dis_optimizer, epoch=epoch, step=writer_dict['train_global_steps'])
         train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,fixed_z, lr_schedulers)
 
 
@@ -365,8 +372,6 @@ def main_worker(gpu, ngpus_per_node, args):
             'fixed_z': fixed_z
         }, is_best, args.path_helper['ckpt_path'], filename="checkpoint")
         del avg_gen_net
-    #np.array(lista)
-    #np.save('lista3', lista)
 
 def gen_plot(gen_net, epoch, class_name):
     """Create a pyplot plot and save to buffer."""
@@ -390,6 +395,25 @@ def gen_plot(gen_net, epoch, class_name):
     #added because creates lots of data and broke the node containing the training (isn't made for big training)
     plt.close() # originally without this 
     return buf
+
+def log_learning_rates(csv_filename, gen_optimizer, dis_optimizer, epoch, step):
+    # Verifica se o arquivo já existe
+    file_exists = os.path.isfile(csv_filename)
+    
+    # Obtém os learning rates dos otimizadores
+    gen_lr = gen_optimizer.param_groups[0]['lr']
+    dis_lr = dis_optimizer.param_groups[0]['lr']
+    
+    # Escreve no arquivo CSV
+    with open(csv_filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        
+        # Escreve o cabeçalho se for a primeira vez
+        if not file_exists:
+            writer.writerow(["epoch", "step", "generator_lr", "discriminator_lr"])
+        
+        # Escreve os dados
+        writer.writerow([epoch, step, gen_lr, dis_lr])
 
 if __name__ == '__main__':
     main()
