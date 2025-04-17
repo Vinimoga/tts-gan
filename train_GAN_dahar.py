@@ -40,6 +40,7 @@ import PIL.Image
 from torchvision.transforms import ToTensor
 from sklearn.model_selection import train_test_split
 
+from customdataset import CustomDataModule, get_data
 # torch.backends.cudnn.enabled = True
 # torch.backends.cudnn.benchmark = True
 
@@ -122,12 +123,12 @@ def main_worker(gpu, ngpus_per_node, args):
             nn.init.constant_(m.bias.data, 0.0)
 
     # import network
-    #set_seed(args.random_seed)
-    gen_net = Generator(seq_len=args.seq_len, channels=args.channels, unsqueeze=False) #Generator_original
+    set_seed(args.random_seed)
+    gen_net = Generator(seq_len=args.seq_len, channels=args.channels) #Generator_original
     print(gen_net)
     dis_net = Discriminator(seq_len=args.seq_len, channels=args.channels, unsqueeze=False) #Discriminator_original
     print(dis_net)
-    if not torch.cuda.is_available():
+    if not torch.cuda.is_available(): #just to see the cpu in action
         print('using CPU, this will be slow')
     elif args.distributed:
         # For multiprocessing distributed, DistributedDataParallel constructor
@@ -163,9 +164,9 @@ def main_worker(gpu, ngpus_per_node, args):
         torch.cuda.set_device(args.gpu)
         gen_net.cuda(args.gpu)
         dis_net.cuda(args.gpu)
-    else:
-        gen_net = torch.nn.DataParallel(gen_net).cuda()
-        dis_net = torch.nn.DataParallel(dis_net).cuda()
+    #else:
+        #gen_net = torch.nn.DataParallel(gen_net).cuda()
+        #dis_net = torch.nn.DataParallel(dis_net).cuda()
     print(dis_net) if args.rank == 0 else 0
         
 
@@ -208,7 +209,7 @@ def main_worker(gpu, ngpus_per_node, args):
 #     test_loader = data.DataLoader(test_set, batch_size=args.dis_batch_size, num_workers=args.num_workers, shuffle=True)
     print(args.class_name)
     print(args.dataset)
-    
+    set_seed(1)
     if args.dataset == 'UniMiB':
         train_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Train', single_class = True, class_name = args.class_name, augment_times=args.augment_times)
         train_loader = data.DataLoader(train_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
@@ -220,6 +221,10 @@ def main_worker(gpu, ngpus_per_node, args):
         train_set, test_set = np.array(train_set), np.array(test_set)
         train_loader = data.DataLoader(train_data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+    if args.dataset == 'darghar_minerva':
+        custom_data_module = get_data(args.data_path, batch_size=args.batch_size, val_split=0.2, num_workers=args.num_workers, seed=args.random_seed, device=args.device)
+        train_loader = custom_data_module.train_dataloader()
+        test_loader = custom_data_module.val_dataloader()
     else:
         raise NotImplementedError('{} unknown dataset'.format(args.init_type))
 
@@ -307,7 +312,7 @@ def main_worker(gpu, ngpus_per_node, args):
         if epoch % t_checkpoint == 0:
             t += 1
             print('\n\n')
-            save_checkpoint({'gen_state_dict': gen_net.module.state_dict(), 'dis_state_dict': dis_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
+            #save_checkpoint({'gen_state_dict': gen_net.module.state_dict(), 'dis_state_dict': dis_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
             print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
             print('\n\n')
 
