@@ -16,6 +16,7 @@ from imageio import imsave
 from utils.utils import make_grid, save_image
 from tqdm import tqdm
 import cv2
+import random
 
 # from utils.fid_score import calculate_fid_given_paths
 from utils.torch_fid_score import get_fid
@@ -215,21 +216,30 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
         
 
         # Adversarial ground truths
+        imgs = torch.from_numpy(np.load('Projetos/tts-gan/X_batch.npy')).unsqueeze(dim=2)    #APAGAR
         real_imgs = imgs.type(torch.cuda.FloatTensor).cuda(args.gpu, non_blocking=True)
 
         # Sample noise as generator input
+        set_seed(1)                                                                     #APAGAR
         z = torch.cuda.FloatTensor(np.random.normal(0, 1, (imgs.shape[0], args.latent_dim))).cuda(args.gpu, non_blocking=True)
 
+        #print(f"generator random weight: {gen_net.state_dict()['module.blocks.1.0.fn.1.keys.weight'][0]}")#################################################################################################################################################################################################
+        #print(f"discriminator random weight: {dis_net.state_dict()['module.backbone.1.2.0.fn.1.queries.weight'][0]}")######################################################################################################################################################################################
         # ---------------------
         #  Train Discriminator
         # ---------------------
-        
+        dis_net = dis_net.to('cpu')
+        gen_net = gen_net.to('cpu')
+        z = z.to('cpu')
+        real_imgs = real_imgs.to('cpu')
 
+        set_seed(1)
         real_validity = dis_net(real_imgs)
+        set_seed(1)
         fake_imgs = gen_net(z).detach()
         
         assert fake_imgs.size() == real_imgs.size(), f"fake_imgs.size(): {fake_imgs.size()} real_imgs.size(): {real_imgs.size()}"
-
+        set_seed(1)
         fake_validity = dis_net(fake_imgs)
 
         # cal loss
@@ -256,8 +266,8 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
                     d_fake_loss = nn.MSELoss()(fake_validity_item, fake_label)
                     d_loss += d_real_loss + d_fake_loss
             else:
-                real_label = torch.full((real_validity.shape[0],real_validity.shape[1]), 1., dtype=torch.float, device=real_imgs.get_device())
-                fake_label = torch.full((real_validity.shape[0],real_validity.shape[1]), 0., dtype=torch.float, device=real_imgs.get_device())
+                real_label = torch.full((real_validity.shape[0],real_validity.shape[1]), 1., dtype=torch.float,) #device=real_imgs.get_device())
+                fake_label = torch.full((real_validity.shape[0],real_validity.shape[1]), 0., dtype=torch.float,) #device=real_imgs.get_device())
                 d_real_loss = nn.MSELoss()(real_validity, real_label)
                 d_fake_loss = nn.MSELoss()(fake_validity, fake_label)
                 d_loss = d_real_loss + d_fake_loss
@@ -293,6 +303,7 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
             
             for accumulated_idx in range(args.g_accumulated_times):
                 gen_z = torch.cuda.FloatTensor(np.random.normal(0, 1, (args.gen_batch_size, args.latent_dim)))
+                gen_z = gen_z.to(args.device)
                 gen_imgs = gen_net(gen_z)
                 fake_validity = dis_net(gen_imgs)
 
@@ -574,3 +585,10 @@ def copy_params(model, mode='cpu'):
     else:
         flatten = deepcopy(list(p.data for p in model.parameters()))
     return flatten
+
+def set_seed(seed: int = 42):  
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)

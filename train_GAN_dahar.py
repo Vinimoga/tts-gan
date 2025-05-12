@@ -6,9 +6,17 @@ import cfg
 # import models_search
 # import datasets
 from dataLoader import *
-from GANModels import * 
-from functions import train, train_d, validate, save_samples, LinearLrDecay, load_params, copy_params, cur_stages
+#from GANModels import * 
+#from GANModelsOriginal import *
+from minerva.models.nets.time_series.gans import TTSGAN_Generator as Generator
+from minerva.models.nets.time_series.gans import TTSGAN_Discriminator as Discriminator
+
+from functions import train, train_d, validate, save_samples, LinearLrDecay, load_params, copy_params, cur_stages, set_seed
 from utils.utils import set_log_dir, save_checkpoint, create_logger
+
+import csv
+import os
+
 # from utils.inception_score import _init_inception
 # from utils.fid_score import create_inception_graph, check_or_download_inception
 
@@ -32,6 +40,7 @@ import PIL.Image
 from torchvision.transforms import ToTensor
 from sklearn.model_selection import train_test_split
 
+from customdataset import CustomDataModule, get_data
 # torch.backends.cudnn.enabled = True
 # torch.backends.cudnn.benchmark = True
 
@@ -114,12 +123,12 @@ def main_worker(gpu, ngpus_per_node, args):
             nn.init.constant_(m.bias.data, 0.0)
 
     # import network
-    
-    gen_net = Generator(seq_len=args.seq_len, channels=args.channels)
+    set_seed(args.random_seed)
+    gen_net = Generator(seq_len=args.seq_len, channels=args.channels) #Generator_original
     print(gen_net)
-    dis_net = Discriminator(seq_len=args.seq_len, in_channels=args.channels)
+    dis_net = Discriminator(seq_len=args.seq_len, channels=args.channels, unsqueeze=False) #Discriminator_original
     print(dis_net)
-    if not torch.cuda.is_available():
+    if not torch.cuda.is_available(): #just to see the cpu in action
         print('using CPU, this will be slow')
     elif args.distributed:
         # For multiprocessing distributed, DistributedDataParallel constructor
@@ -155,9 +164,9 @@ def main_worker(gpu, ngpus_per_node, args):
         torch.cuda.set_device(args.gpu)
         gen_net.cuda(args.gpu)
         dis_net.cuda(args.gpu)
-    else:
-        gen_net = torch.nn.DataParallel(gen_net).cuda()
-        dis_net = torch.nn.DataParallel(dis_net).cuda()
+    #else:
+        #gen_net = torch.nn.DataParallel(gen_net).cuda()
+        #dis_net = torch.nn.DataParallel(dis_net).cuda()
     print(dis_net) if args.rank == 0 else 0
         
 
@@ -200,18 +209,22 @@ def main_worker(gpu, ngpus_per_node, args):
 #     test_loader = data.DataLoader(test_set, batch_size=args.dis_batch_size, num_workers=args.num_workers, shuffle=True)
     print(args.class_name)
     print(args.dataset)
-    
+    set_seed(1)
     if args.dataset == 'UniMiB':
         train_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Train', single_class = True, class_name = args.class_name, augment_times=args.augment_times)
         train_loader = data.DataLoader(train_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Test', single_class = True, class_name = args.class_name)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
     if args.dataset == 'daghar':
-        data_set = daghar_load_dataset_with_label(class_name=args.class_name, seq_len = args.seq_len, data_path = args.data_path, label_path = args.label_path, channels=args.channels)
-        train_set, test_set = train_test_split(data_set[:][0], train_size=0.8)
+        train_data_set = daghar_load_dataset_with_label(class_name=args.class_name, seq_len = args.seq_len, data_path = args.data_path, label_path = args.label_path, channels=args.channels, percentage= 0.8) #Change the percentage if you want
+        train_set, test_set = train_test_split(train_data_set[:][0], train_size=0.8)
         train_set, test_set = np.array(train_set), np.array(test_set)
-        train_loader = data.DataLoader(data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+        train_loader = data.DataLoader(train_data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
+    if args.dataset == 'darghar_minerva':
+        custom_data_module = get_data(args.data_path, batch_size=args.batch_size, val_split=0.2, num_workers=args.num_workers, seed=args.random_seed, device=args.device)
+        train_loader = custom_data_module.train_dataloader()
+        test_loader = custom_data_module.val_dataloader()
     else:
         raise NotImplementedError('{} unknown dataset'.format(args.init_type))
 
@@ -299,21 +312,19 @@ def main_worker(gpu, ngpus_per_node, args):
         if epoch % t_checkpoint == 0:
             t += 1
             print('\n\n')
-            save_checkpoint({'gen_state_dict': gen_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
+            #save_checkpoint({'gen_state_dict': gen_net.module.state_dict(), 'dis_state_dict': dis_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_checkpoint")
             print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
             print('\n\n')
+
+        #print(dis_net.module.state_dict()['backbone.0.cls_token'][0][0][0:10]) #to see if it is the same in every move
+        #lista.append(dis_net.module.state_dict()['backbone.0.cls_token'].cpu().detach().numpy())
+        #print(f"generator random weight: {gen_net.state_dict()['module.blocks.1.0.fn.1.keys.weight'][0]}")#################################################################################################################################################################################################
+        #print(f"discriminator random weight: {dis_net.state_dict()['module.backbone.1.2.0.fn.1.queries.weight'][0]}")######################################################################################################################################################################################
         
-       # if epoch > 9800 and epoch % (args.t_checkpoint/10) == 0:
-
-       #     t += 1
-       #     print('\n\n\n')
-       #     save_checkpoint({'gen_state_dict': gen_net.module.state_dict()}, False, args.path_helper['ckpt_path'], filename=f"{t}_obs_checkpoint")
-       #     print(f"Saving checkpoint {t} in {args.path_helper['ckpt_path']}")
-       #     print('\n\n\n')
-
-
+        #log_learning_rates(csv_filename='Projetos/tts-gan/pindamonhamgaba', gen_optimizer=gen_optimizer, dis_optimizer=dis_optimizer, epoch=epoch, step=writer_dict['train_global_steps'])
         train(args, gen_net, dis_net, gen_optimizer, dis_optimizer, gen_avg_param, train_loader, epoch, writer_dict,fixed_z, lr_schedulers)
-        
+
+
         if args.rank == 0 and args.show:
             backup_param = copy_params(gen_net)
             load_params(gen_net, gen_avg_param, args, mode="cpu")
@@ -366,7 +377,7 @@ def main_worker(gpu, ngpus_per_node, args):
             'fixed_z': fixed_z
         }, is_best, args.path_helper['ckpt_path'], filename="checkpoint")
         del avg_gen_net
-        
+
 def gen_plot(gen_net, epoch, class_name):
     """Create a pyplot plot and save to buffer."""
     synthetic_data = [] 
@@ -389,6 +400,25 @@ def gen_plot(gen_net, epoch, class_name):
     #added because creates lots of data and broke the node containing the training (isn't made for big training)
     plt.close() # originally without this 
     return buf
+
+def log_learning_rates(csv_filename, gen_optimizer, dis_optimizer, epoch, step):
+    # Verifica se o arquivo já existe
+    file_exists = os.path.isfile(csv_filename)
+    
+    # Obtém os learning rates dos otimizadores
+    gen_lr = gen_optimizer.param_groups[0]['lr']
+    dis_lr = dis_optimizer.param_groups[0]['lr']
+    
+    # Escreve no arquivo CSV
+    with open(csv_filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        
+        # Escreve o cabeçalho se for a primeira vez
+        if not file_exists:
+            writer.writerow(["epoch", "step", "generator_lr", "discriminator_lr"])
+        
+        # Escreve os dados
+        writer.writerow([epoch, step, gen_lr, dis_lr])
 
 if __name__ == '__main__':
     main()

@@ -216,18 +216,18 @@ class ReduceLayer(nn.Module):
     
 class PatchEmbedding_Linear(nn.Module):
     #what are the proper parameters set here?
-    def __init__(self, in_channels = 21, patch_size = 16, emb_size = 100, seq_len = 1024):
+    def __init__(self, channels = 21, patch_size = 16, emb_size = 100, seq_len = 1024):
         # self.patch_size = patch_size
         super().__init__()
         #change the conv2d parameters here
         '''
         self.projection = nn.Sequential(
             Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)',s1 = 1, s2 = patch_size),
-            nn.Linear(patch_size*in_channels, emb_size))
+            nn.Linear(patch_size*channels, emb_size))
         '''
         self.projection = nn.Sequential(
             RearrangeLayer(patch_size=patch_size, s1=1),  # Substitui o Rearrange do einops
-            nn.Linear(patch_size * in_channels, emb_size))
+            nn.Linear(patch_size * channels, emb_size))
         
         self.cls_token = nn.Parameter(torch.randn(1, 1, emb_size))
         self.positions = nn.Parameter(torch.randn((seq_len // patch_size) + 1, emb_size))
@@ -266,7 +266,7 @@ class RearrangeLayer(nn.Module):
         
 class Discriminator(nn.Sequential):
     def __init__(self, 
-                 in_channels=3,
+                 channels=3,
                  patch_size=15,
                  emb_size=50, 
                  seq_len = 150,
@@ -274,19 +274,19 @@ class Discriminator(nn.Sequential):
                  n_classes=1, 
                  **kwargs):
         super().__init__(
-            PatchEmbedding_Linear(in_channels, patch_size, emb_size, seq_len),
+            PatchEmbedding_Linear(channels, patch_size, emb_size, seq_len),
             Dis_TransformerEncoder(depth, emb_size=emb_size, drop_p=0.5, forward_drop_p=0.5, **kwargs),
             ClassificationHead(emb_size, n_classes)
         )
 class Encoder(nn.Sequential):
     def __init__(self, 
-                 in_channels=3,
+                 channels=3,
                  patch_size=15,
                  emb_size=50, 
                  seq_len = 150,
                  depth=3,  
                  **kwargs):
         super().__init__(
-            PatchEmbedding_Linear(in_channels, patch_size, emb_size, seq_len),
+            PatchEmbedding_Linear(channels, patch_size, emb_size, seq_len),
             Dis_TransformerEncoder(depth, emb_size=emb_size, drop_p=0.5, forward_drop_p=0.5, **kwargs),
         )
