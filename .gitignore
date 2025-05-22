@@ -13,3 +13,9 @@ DAGHAR_split_25_10_all.tar
 minerva/
 Notebooks/Minerva_experiments/
 !Notebooks/Minerva_experiments/train_lightning.py
+!Notebooks/Minerva_experiments/train_lightning_debug.py
+!Notebooks/Minerva_experiments/dataLoader.py
+!Notebooks/Minerva_experiments/customdataset.py
+!Notebooks/Minerva_experiments/callbacks.py
+!Notebooks/Minerva_experiments/training_with_lightning.ipynb
+!Notebooks/Minerva_experiments/utils_functions.py
