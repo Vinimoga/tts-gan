@@ -17,14 +17,8 @@ from minerva.models.nets.time_series.gans import TTSGAN_Discriminator as Discrim
 
 from functions_simplified import (
     train,
-    train_d,
-    validate,
-    save_samples,
-    LinearLrDecay,
     load_params,
     copy_params,
-    cur_stages,
-    set_seed,
 )
 from utils.utils import set_log_dir, save_checkpoint, create_logger
 
@@ -131,7 +125,7 @@ def main():
         "hid_size": 100,
         "img_size": 32,
         "init_type": "xavier_uniform",
-        "label_path": '/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/label/UCI_DAGHAR_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv",
+        "label_path": '/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv",
         "latent_dim": 100,
         "latent_norm": False,
         "load_path": None,
@@ -139,7 +133,7 @@ def main():
         "log_dir": '/workspaces/container-workspace/tts-gan/logs/TEST',#"workspaces/vinicius.garcia/Projetos/tts-gan/logs/TEST",
         "loss": "lsgan",
         "lr_decay": False,
-        "max_epoch": 200,
+        "max_epoch": 300,
         "max_iter": 137694,
         "max_search_iter": 90,
         "ministd": False,
@@ -170,18 +164,8 @@ def main():
     args = Namespace(**args)
     
     print(args)
-    
-
-    #     _init_inception()
-    #     inception_path = check_or_download_inception(None)
-    #     create_inception_graph(inception_path)
 
     if args.seed is not None:
-        # torch.manual_seed(args.random_seed)
-        # torch.cuda.manual_seed(args.random_seed)
-        # torch.cuda.manual_seed_all(args.random_seed)
-        # np.random.seed(args.random_seed)
-        # random.seed(args.random_seed)
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
         L.seed_everything(args.seed, workers=True)
@@ -191,24 +175,6 @@ def main():
         pass
 
     main_worker(args.gpu, 1, args)
-
-    # if args.dist_url == "env://" and args.world_size == -1:
-    #     args.world_size = int(os.environ["WORLD_SIZE"])
-
-    # args.distributed = args.world_size > 1 or args.multiprocessing_distributed
-
-    # ngpus_per_node = torch.cuda.device_count()
-    # if args.multiprocessing_distributed:
-    #     # Since we have ngpus_per_node processes per node, the total world_size
-    #     # needs to be adjusted accordingly
-    #     args.world_size = ngpus_per_node * args.world_size
-    #     # Use torch.multiprocessing.spawn to launch distributed processes: the
-    #     # main_worker process function
-    #     mp.spawn(main_worker, nprocs=ngpus_per_node, args=(ngpus_per_node, args))
-    # else:
-    #     # Simply call main_worker function
-    #     main_worker(args.gpu, ngpus_per_node, args)
-
 
 def main_worker(gpu, ngpus_per_node, args):
     args.gpu = gpu
@@ -234,7 +200,6 @@ def main_worker(gpu, ngpus_per_node, args):
             nn.init.constant_(m.bias.data, 0.0)
 
     # import network
-    # set_seed(args.random_seed)
     gen_net = Generator(
         seq_len=args.seq_len, channels=args.channels
     )  # Generator_original
@@ -289,24 +254,6 @@ def main_worker(gpu, ngpus_per_node, args):
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=4)
 
-    # train_set, test_set = train_test_split(
-    #     train_data_set[:][0], train_size=0.8, random_state=args.seed
-    # )
-    # train_set, test_set = np.array(train_set), np.array(test_set)
-    # train_loader = data.DataLoader(
-    #     train_data_set,
-    #     batch_size=args.batch_size,
-    #     num_workers=args.num_workers,
-    #     shuffle=False,
-    # )
-    # test_loader = data.DataLoader(
-    #     test_set,
-    #     batch_size=args.batch_size,
-    #     num_workers=args.num_workers,
-    #     shuffle=False,
-    # )
-
-    ########################################
     print(len(train_loader))
     for batch in train_loader:
         X_batch, y_batch = batch
@@ -314,10 +261,6 @@ def main_worker(gpu, ngpus_per_node, args):
         break
 
     t_checkpoint = int(np.ceil(args.max_epoch / args.checkpoint_number))
-    # initial
-    #fixed_z = torch.tensor(
-    #    np.random.normal(0, 1, (100, args.latent_dim)), dtype=torch.float32
-    #)
     fixed_z = 0
     avg_gen_net = deepcopy(gen_net).cpu()
     gen_avg_param = copy_params(avg_gen_net)
@@ -348,25 +291,9 @@ def main_worker(gpu, ngpus_per_node, args):
             schedulers=None,
         )
 
-        if args.rank == 0 and args.show:
-            backup_param = copy_params(gen_net)
-            load_params(gen_net, gen_avg_param, args, mode="cpu")
-            save_samples(args, fixed_z, fid_stat, epoch, gen_net, writer_dict)
-            load_params(gen_net, backup_param, args)
-
-        #gen_net.eval()
-        #plot_buf = gen_plot(gen_net, epoch, args.class_name)
-        #image = PIL.Image.open(plot_buf)
-        #image = ToTensor()(image).unsqueeze(0)
-        # writer = SummaryWriter(comment='synthetic signals')
-        #writer.add_image("Image", image[0], epoch)
-
         is_best = False
         avg_gen_net = deepcopy(gen_net)
         load_params(avg_gen_net, gen_avg_param, args)
-        #         if not args.multiprocessing_distributed or (args.multiprocessing_distributed
-        #                 and args.rank == 0):
-        # Add module in model saving code exp'gen_net.module.state_dict()' to solve the model loading unpaired name problem
         save_checkpoint(
             {
                 "epoch": epoch + 1,
@@ -410,27 +337,6 @@ def gen_plot(gen_net, epoch, class_name):
     # added because creates lots of data and broke the node containing the training (isn't made for big training)
     plt.close()  # originally without this
     return buf
-
-
-def log_learning_rates(csv_filename, gen_optimizer, dis_optimizer, epoch, step):
-    # Verifica se o arquivo já existe
-    file_exists = os.path.isfile(csv_filename)
-
-    # Obtém os learning rates dos otimizadores
-    gen_lr = gen_optimizer.param_groups[0]["lr"]
-    dis_lr = dis_optimizer.param_groups[0]["lr"]
-
-    # Escreve no arquivo CSV
-    with open(csv_filename, mode="a", newline="") as file:
-        writer = csv.writer(file)
-
-        # Escreve o cabeçalho se for a primeira vez
-        if not file_exists:
-            writer.writerow(["epoch", "step", "generator_lr", "discriminator_lr"])
-
-        # Escreve os dados
-        writer.writerow([epoch, step, gen_lr, dis_lr])
-
 
 if __name__ == "__main__":
     main()

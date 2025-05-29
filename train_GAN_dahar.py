@@ -123,7 +123,7 @@ def main_worker(gpu, ngpus_per_node, args):
             nn.init.constant_(m.bias.data, 0.0)
 
     # import network
-    set_seed(args.random_seed)
+    #set_seed(args.random_seed)
     gen_net = Generator(seq_len=args.seq_len, channels=args.channels) #Generator_original
     print(gen_net)
     dis_net = Discriminator(seq_len=args.seq_len, channels=args.channels, unsqueeze=False) #Discriminator_original

@@ -60,9 +60,9 @@ def parse_args():
     parser.add_argument('--dis_lr', type=float, default=0.0003)
     parser.add_argument('--assimetrical_percentage', type=float, default=1.0)
     parser.add_argument('--clip_grad', type=none_or_float, default=5., help="Valor de clipagem de gradiente ou None")
-    parser.add_argument('--save_dir', type=str, default='/workspaces/vinicius.garcia/Projetos/tts-gan/Notebooks/Minerva_experiments/training')
+    parser.add_argument('--save_dir', type=str, default='/workspaces/container-workspace/tts-gan/Notebooks/Minerva_experiments/training')
     parser.add_argument('--name', type=str, default='experimentx')
-    parser.add_argument('--data_path', type=str, default='/workspaces/vinicius.garcia/Projetos/standardize_view')
+    parser.add_argument('--data_path', type=str, default='tts-gan/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv')
     opt = parser.parse_args()
 
     return opt
@@ -111,8 +111,8 @@ model = GAN(generator = generator,
 train_data_set = daghar_load_dataset_with_label(
     class_name='daghar',
     seq_len=60,
-    data_path='Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv',
-    label_path='Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv',
+    data_path='/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv',
+    label_path='/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv',
     channels=6,
     percentage=0.8,
 )
