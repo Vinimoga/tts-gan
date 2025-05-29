@@ -23,6 +23,7 @@ from lightning.pytorch.loggers.csv_logs import CSVLogger
 
 import copy
 import random
+import requests
 
 from torch.utils import data
 from torch.utils.data import TensorDataset, DataLoader
@@ -91,7 +92,7 @@ args = parse_args()
 print(args)
 
 set_seed(args.seed)
-device = 'cpu'
+device = 'cuda' 
 
 generator = TTSGAN_Generator(seq_len = 60, channels = 6)
 discriminator = TTSGAN_Discriminator(seq_len = 60, channels = 6, unsqueeze = True)
@@ -106,13 +107,14 @@ model = GAN(generator = generator,
             beta1 = args.beta1,
             beta2 = args.beta2,
             clip_grad = args.clip_grad,
+            toggle = False
             )
 
 train_data_set = daghar_load_dataset_with_label(
     class_name='daghar',
     seq_len=60,
-    data_path='/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv',
-    label_path='/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv',
+    data_path='/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv',
+    label_path='/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv',
     channels=6,
     percentage=0.8,
 )
@@ -160,7 +162,25 @@ logger = CSVLogger(save_dir=args.save_dir, name=args.name, version=args.version)
 
 trainer = L.Trainer(accelerator=args.device, devices=1,
                     callbacks=[printing_callback], #[printing_callback, knnvalidation_callback, tsnecallbackencoder],#[printing_callback, knnvalidation_callback, tsnecallbackencoder], #printing_callback
-                    logger=logger, max_epochs=args.n_epochs,
-                    limit_val_batches=0)  #teste
+                    logger=logger, max_epochs=args.n_epochs)
 
 trainer.fit(model = model, datamodule = data_module)
+
+torch.save(model.state_dict(), os.path.join(args.save_dir, args.name, f"model_{args.version}.pth"))
+print("Training complete. Model saved.")
+
+
+def send_telegram_message(message):
+    token = "8083579885:AAEGyRUnYB86xHtlukUbkzksSHjAsxxDNiU"
+    chat_id = "7823372332"  # Substitua com o chat_id que você pegou do JSON
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": message
+    }
+    response = requests.post(url, data=payload)
+    if response.status_code != 200:
+        print(f"Erro ao enviar mensagem: {response.text}")
+    return response
+
+send_telegram_message("✅ Seu código terminou com sucesso!")
