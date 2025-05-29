@@ -93,7 +93,7 @@ def main():
         "d_norm": "ln",
         "d_spectral_norm": False,
         "d_window_size": 8,
-        "data_path": "/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv",
+        "data_path": '/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv",
         "dataset": "daghar",
         "df_dim": 384,
         "diff_aug": "translation,cutout,color",
@@ -131,12 +131,12 @@ def main():
         "hid_size": 100,
         "img_size": 32,
         "init_type": "xavier_uniform",
-        "label_path": "/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv",
+        "label_path": '/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/label/UCI_DAGHAR_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv",
         "latent_dim": 100,
         "latent_norm": False,
         "load_path": None,
         "loca_rank": -1,
-        "log_dir": "worksáces/vinicius.garcia/Projetos/tts-gan/logs/TEST",
+        "log_dir": '/workspaces/container-workspace/tts-gan/logs/TEST',#"workspaces/vinicius.garcia/Projetos/tts-gan/logs/TEST",
         "loss": "lsgan",
         "lr_decay": False,
         "max_epoch": 200,
@@ -354,10 +354,10 @@ def main_worker(gpu, ngpus_per_node, args):
             save_samples(args, fixed_z, fid_stat, epoch, gen_net, writer_dict)
             load_params(gen_net, backup_param, args)
 
-        gen_net.eval()
-        plot_buf = gen_plot(gen_net, epoch, args.class_name)
-        image = PIL.Image.open(plot_buf)
-        image = ToTensor()(image).unsqueeze(0)
+        #gen_net.eval()
+        #plot_buf = gen_plot(gen_net, epoch, args.class_name)
+        #image = PIL.Image.open(plot_buf)
+        #image = ToTensor()(image).unsqueeze(0)
         # writer = SummaryWriter(comment='synthetic signals')
         #writer.add_image("Image", image[0], epoch)
 
