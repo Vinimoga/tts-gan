@@ -66,7 +66,7 @@ args = parse_args()
 print(args)
 
 set_seed(args.seed)
-device = 'cpu'
+#device = 'cpu'
 
 SAC = ['Sit', 'Stand', 'Walk', 'Upstairs', 'Downstairs', 'Run']
 dataNames = os.listdir(args.data_path)
@@ -128,6 +128,7 @@ model = GAN(generator = generator,
             beta1 = args.beta1,
             beta2 = args.beta2,
             clip_grad = args.clip_grad,
+            toggle = False
             )
 
 
