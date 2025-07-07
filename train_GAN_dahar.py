@@ -41,13 +41,10 @@ from torchvision.transforms import ToTensor
 from sklearn.model_selection import train_test_split
 
 from customdataset import CustomDataModule, get_data
-# torch.backends.cudnn.enabled = True
-# torch.backends.cudnn.benchmark = True
 
 
 def main():
     args = cfg.parse_args()
-    
 #     _init_inception()
 #     inception_path = check_or_download_inception(None)
 #     create_inception_graph(inception_path)
@@ -209,22 +206,17 @@ def main_worker(gpu, ngpus_per_node, args):
 #     test_loader = data.DataLoader(test_set, batch_size=args.dis_batch_size, num_workers=args.num_workers, shuffle=True)
     print(args.class_name)
     print(args.dataset)
-    set_seed(1)
     if args.dataset == 'UniMiB':
         train_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Train', single_class = True, class_name = args.class_name, augment_times=args.augment_times)
         train_loader = data.DataLoader(train_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_set = unimib_load_dataset(incl_xyz_accel = True, incl_rms_accel = False, incl_val_group = False, is_normalize = True, one_hot_encode = False, data_mode = 'Test', single_class = True, class_name = args.class_name)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
-    if args.dataset == 'daghar':
+    elif args.dataset == 'daghar':
         train_data_set = daghar_load_dataset_with_label(class_name=args.class_name, seq_len = args.seq_len, data_path = args.data_path, label_path = args.label_path, channels=args.channels, percentage= 0.8) #Change the percentage if you want
         train_set, test_set = train_test_split(train_data_set[:][0], train_size=0.8)
         train_set, test_set = np.array(train_set), np.array(test_set)
         train_loader = data.DataLoader(train_data_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
         test_loader = data.DataLoader(test_set, batch_size=args.batch_size, num_workers=args.num_workers, shuffle = True)
-    if args.dataset == 'darghar_minerva':
-        custom_data_module = get_data(args.data_path, batch_size=args.batch_size, val_split=0.2, num_workers=args.num_workers, seed=args.random_seed, device=args.device)
-        train_loader = custom_data_module.train_dataloader()
-        test_loader = custom_data_module.val_dataloader()
     else:
         raise NotImplementedError('{} unknown dataset'.format(args.init_type))
 

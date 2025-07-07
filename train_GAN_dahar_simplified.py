@@ -87,7 +87,7 @@ def main():
         "d_norm": "ln",
         "d_spectral_norm": False,
         "d_window_size": 8,
-        "data_path": '/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv",
+        "data_path": '/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv",
         "dataset": "daghar",
         "df_dim": 384,
         "diff_aug": "translation,cutout,color",
@@ -98,7 +98,7 @@ def main():
         "dropout": 0.0,
         "dynamic_reset_threshold": 0.001,
         "dynamic_reset_window": 500,
-        "device": "cpu",
+        "device": "cuda", #cpu
         "ema_kimg": 500,
         "ema_warmup": 0.1,
         "ema": 0.9999,
@@ -125,12 +125,12 @@ def main():
         "hid_size": 100,
         "img_size": 32,
         "init_type": "xavier_uniform",
-        "label_path": '/workspaces/container-workspace/tts-gan/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv",
+        "label_path": '/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv', #"/workspaces/vinicius.garcia/Projetos/DAGHAR_split_25_10_all/train/label/UCI_Label_Multiclass.csv",
         "latent_dim": 100,
         "latent_norm": False,
         "load_path": None,
         "loca_rank": -1,
-        "log_dir": '/workspaces/container-workspace/tts-gan/logs/TEST',#"workspaces/vinicius.garcia/Projetos/tts-gan/logs/TEST",
+        "log_dir": '/workspaces/vinicius.garcia/Projetos/tts-gan/logs/TEST0',#"workspaces/vinicius.garcia/Projetos/tts-gan/logs/TEST",
         "loss": "lsgan",
         "lr_decay": False,
         "max_epoch": 300,
@@ -149,10 +149,10 @@ def main():
         "path_helper": None,
         "phi": 1.0,
         "print_freq": 1000,
-        "random_seed": 1,
+        "random_seed": 3,
         "rank": 0,
         "rl_num_eval_img": 5000,
-        "seed": 42,
+        "seed": 3,
         "seq_len": 60,
         "shared_epoch": 15,
         "show": False,
@@ -181,23 +181,6 @@ def main_worker(gpu, ngpus_per_node, args):
 
     if args.gpu is not None:
         print("Use GPU: {} for training".format(args.gpu))
-
-    def weights_init(m):
-        classname = m.__class__.__name__
-        if classname.find("Conv2d") != -1:
-            if args.init_type == "normal":
-                nn.init.normal_(m.weight.data, 0.0, 0.02)
-            elif args.init_type == "orth":
-                nn.init.orthogonal_(m.weight.data)
-            elif args.init_type == "xavier_uniform":
-                nn.init.xavier_uniform(m.weight.data, 1.0)
-            else:
-                raise NotImplementedError(
-                    "{} unknown inital type".format(args.init_type)
-                )
-        elif classname.find("BatchNorm2d") != -1:
-            nn.init.normal_(m.weight.data, 1.0, 0.02)
-            nn.init.constant_(m.bias.data, 0.0)
 
     # import network
     gen_net = Generator(
@@ -292,8 +275,8 @@ def main_worker(gpu, ngpus_per_node, args):
         )
 
         is_best = False
-        avg_gen_net = deepcopy(gen_net)
-        load_params(avg_gen_net, gen_avg_param, args)
+        #avg_gen_net = deepcopy(gen_net)
+        #load_params(avg_gen_net, gen_avg_param, args)
         save_checkpoint(
             {
                 "epoch": epoch + 1,
@@ -301,7 +284,7 @@ def main_worker(gpu, ngpus_per_node, args):
                 "dis_model": args.dis_model,
                 "gen_state_dict": gen_net.state_dict(), #gen_net.module.state_dict(),
                 "dis_state_dict": dis_net.state_dict(), #dis_net.module.state_dict(),
-                "avg_gen_state_dict": avg_gen_net.state_dict(),#avg_gen_net.module.state_dict()
+                #"avg_gen_state_dict": avg_gen_net.state_dict(),#avg_gen_net.module.state_dict()
                 "gen_optimizer": gen_optimizer.state_dict(),
                 "dis_optimizer": dis_optimizer.state_dict(),
                 "best_fid": best_fid,
@@ -312,7 +295,7 @@ def main_worker(gpu, ngpus_per_node, args):
             args.path_helper["ckpt_path"],
             filename="checkpoint",
         )
-        del avg_gen_net
+        #del avg_gen_net
 
 
 def gen_plot(gen_net, epoch, class_name):

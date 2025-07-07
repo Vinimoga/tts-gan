@@ -148,33 +148,63 @@ def create_gif(image_paths, output_gif_path, duration=500):
         duration=duration,
         loop=0  # 0 means infinite loop
     )    
+
 class KNNValidationCallback(Callback):
-    def __init__(self, k: int=10, flatten: bool=False):
+    def __init__(self, k: int = 5, flatten: bool = False, feature_extractor_path: str = "dis.backbone"):
+        """
+        Args:
+            k (int): Número de vizinhos no KNN.
+            flatten (bool): Se deve achatar as features.
+            feature_extractor_path (str): Caminho para acessar o extrator de features a partir do pl_module,
+                                          por exemplo: "dis.backbone", "backbone", "encoder", etc.
+        """
+
         super().__init__()
         self.knn = KNeighborsClassifier(n_neighbors=k)
         self.flatten = flatten
+        self.feature_extractor_path = feature_extractor_path
+
+    def on_fit_start(self, trainer, pl_module):
+        self._evaluate_knn(trainer, pl_module, prefix="knn")
 
     def on_validation_epoch_end(self, trainer, pl_module):
+        self._evaluate_knn(trainer, pl_module, prefix="knn")
+
+    def _evaluate_knn(self, trainer, pl_module, prefix="knn"):
         val_loader = trainer.datamodule.val_dataloader()
         accuracy_list = []
         for batch in val_loader:
             accuracy_list.append(self.knn_validation(pl_module, batch))
         knn_accuracy = np.array(accuracy_list).mean()
-        pl_module.log("knn_accuracy", knn_accuracy)
+        pl_module.log(f"{prefix}_accuracy", knn_accuracy, prog_bar=True)
 
     def knn_validation(self, pl_module, batch):
         x, y = batch
         x, y = x.to(pl_module.device), y.to(pl_module.device)
-        features = pl_module.dis.backbone(x)
         
+        # Obtem o extrator de features a partir do caminho especificado
+        feature_extractor = self._get_feature_extractor(pl_module)
+        features = feature_extractor(x)
+
         if self.flatten:
             features = features.reshape(features.size(0), -1)
-        
-        self.knn.fit(features.cpu().detach().numpy(), y.cpu().numpy())
-        predictions = self.knn.predict(features.cpu().detach().numpy())
-        knn_accuracy = accuracy_score(y.cpu().numpy(), predictions)
+
+        features_np = features.cpu().detach().numpy()
+        labels_np = y.cpu().numpy()
+
+        self.knn.fit(features_np, labels_np)
+        predictions = self.knn.predict(features_np)
+        knn_accuracy = accuracy_score(labels_np, predictions)
 
         return knn_accuracy
+
+    def _get_feature_extractor(self, pl_module):
+        """Acessa o extrator de features a partir de um caminho string como 'dis.backbone'."""
+        obj = pl_module
+        for attr in self.feature_extractor_path.split("."):
+            obj = getattr(obj, attr)
+        return obj
+
 
 class MyPrintingCallback(Callback):
     #Test callback just to do a start/end test for our training

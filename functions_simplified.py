@@ -25,34 +25,6 @@ from utils.torch_fid_score import get_fid
 
 logger = logging.getLogger(__name__)
 
-
-def compute_gradient_penalty(D, real_samples, fake_samples, phi):
-    """Calculates the gradient penalty loss for WGAN GP"""
-    # Random weight term for interpolation between real and fake samples
-    alpha = torch.Tensor(np.random.random((real_samples.size(0), 1, 1, 1))).to(
-        real_samples.get_device()
-    )
-    # Get random interpolation between real and fake samples
-    interpolates = (alpha * real_samples + ((1 - alpha) * fake_samples)).requires_grad_(
-        True
-    )
-    d_interpolates = D(interpolates)
-    fake = torch.ones([real_samples.shape[0], 1], requires_grad=False).to(
-        real_samples.get_device()
-    )
-    # Get gradient w.r.t. interpolates
-    gradients = torch.autograd.grad(
-        outputs=d_interpolates,
-        inputs=interpolates,
-        grad_outputs=fake,
-        create_graph=True,
-        retain_graph=True,
-        only_inputs=True,
-    )[0]
-    gradients = gradients.reshape(gradients.size(0), -1)
-    gradient_penalty = ((gradients.norm(2, dim=1) - phi) ** 2).mean()
-    return gradient_penalty
-
 def train(
     args,
     gen_net: nn.Module,
@@ -66,26 +38,30 @@ def train(
     writer_dict=None,
     schedulers=None,
 ):
-    # writer = writer_dict['writer']
     i = 0
     gen_step = 0
-    # train mode
+
+    # Train mode
     gen_net.train()
     dis_net.train()
 
+    dis_net.to(args.device)
+    gen_net.to(args.device)
+
     dis_optimizer.zero_grad()
     gen_optimizer.zero_grad()
+
     for iter_idx, (imgs, _) in enumerate(tqdm(train_loader)):
         global_steps = writer_dict['train_global_steps']
 
-       # Ensure imgs is a tensor, and convert it explicitly to float32 on CPU
-        real_imgs = imgs.to(dtype=torch.float32, device='cpu')
+        # Move real images to device
+        real_imgs = imgs.to(dtype=torch.float32, device=args.device)
 
-        # Sample noise as generator input, float32 on CPU
+        # Sample noise as generator input
         z = torch.tensor(
             np.random.normal(0, 1, (imgs.shape[0], args.latent_dim)),
             dtype=torch.float32,
-            device='cpu'
+            device=args.device
         )
 
         # ---------------------
@@ -99,37 +75,20 @@ def train(
             fake_imgs.size() == real_imgs.size()
         ), f"fake_imgs.size(): {fake_imgs.size()} real_imgs.size(): {real_imgs.size()}"
         fake_validity = dis_net(fake_imgs)
+
         if isinstance(fake_validity, list):
             d_loss = 0
-            for real_validity_item, fake_validity_item in zip(
-                real_validity, fake_validity
-            ):
-                real_label = torch.full(
-                    (real_validity_item.shape[0], real_validity_item.shape[1]),
-                    1.0,
-                    dtype=torch.float,
-                    device=real_imgs.get_device(),
-                )
-                fake_label = torch.full(
-                    (real_validity_item.shape[0], real_validity_item.shape[1]),
-                    0.0,
-                    dtype=torch.float,
-                    device=real_imgs.get_device(),
-                )
+            for real_validity_item, fake_validity_item in zip(real_validity, fake_validity):
+                real_label = torch.full_like(real_validity_item, 1.0, device=args.device)
+                fake_label = torch.full_like(fake_validity_item, 0.0, device=args.device)
+
                 d_real_loss = nn.MSELoss()(real_validity_item, real_label)
                 d_fake_loss = nn.MSELoss()(fake_validity_item, fake_label)
                 d_loss += d_real_loss + d_fake_loss
         else:
-            real_label = torch.full(
-                (real_validity.shape[0], real_validity.shape[1]),
-                1.0,
-                dtype=torch.float,
-            )  
-            fake_label = torch.full(
-                (real_validity.shape[0], real_validity.shape[1]),
-                0.0,
-                dtype=torch.float,
-            )  
+            real_label = torch.full_like(real_validity, 1.0, device=args.device)
+            fake_label = torch.full_like(fake_validity, 0.0, device=args.device)
+
             d_real_loss = nn.MSELoss()(real_validity, real_label)
             d_fake_loss = nn.MSELoss()(fake_validity, fake_label)
             d_loss = d_real_loss + d_fake_loss
@@ -150,58 +109,42 @@ def train(
             gen_z = torch.tensor(
                 np.random.normal(0, 1, (imgs.shape[0], args.latent_dim)),
                 dtype=torch.float32,
-                device='cpu'
+                device=args.device
             )
 
-            gen_z = gen_z.to(args.device)
             gen_imgs = gen_net(gen_z)
             fake_validity = dis_net(gen_imgs)
+
             if isinstance(fake_validity, list):
                 g_loss = 0
                 for fake_validity_item in fake_validity:
-                    real_label = torch.full(
-                        (
-                            fake_validity_item.shape[0],
-                            fake_validity_item.shape[1],
-                        ),
-                        1.0,
-                        dtype=torch.float,
-                        device="cpu",
-                    )
+                    real_label = torch.full_like(fake_validity_item, 1.0, device=args.device)
                     g_loss += nn.MSELoss()(fake_validity_item, real_label)
             else:
-                real_label = torch.full(
-                    (fake_validity.shape[0], fake_validity.shape[1]),
-                    1.0,
-                    dtype=torch.float,
-                    device="cpu",
-                )
+                real_label = torch.full_like(fake_validity, 1.0, device=args.device)
                 g_loss = nn.MSELoss()(fake_validity, real_label)
             g_loss.backward()
 
         torch.nn.utils.clip_grad_norm_(gen_net.parameters(), 5.0)
         gen_optimizer.step()
         gen_optimizer.zero_grad()
-        i = i+1
+        i += 1
         if i == 368:
-            registrar_epocas_txt(epoch+1, d_loss, g_loss)
-        
-        
-        # moving average weight
+            registrar_epocas_txt(epoch + 1, d_loss.item(), g_loss.item())
+
+        # Moving average weight
         ema_nimg = args.ema_kimg * 1000
         cur_nimg = args.batch_size * args.world_size * global_steps
         if args.ema_warmup != 0:
             ema_nimg = min(ema_nimg, cur_nimg * args.ema_warmup)
-            ema_beta = 0.5 ** (
-                float(args.batch_size * args.world_size) / max(ema_nimg, 1e-8)
-            )
+            ema_beta = 0.5 ** (float(args.batch_size * args.world_size) / max(ema_nimg, 1e-8))
         else:
             ema_beta = args.ema
 
         # moving average weight
         for p, avg_p in zip(gen_net.parameters(), gen_avg_param):
-            cpu_p = deepcopy(p)
-            avg_p.mul_(ema_beta).add_(1.0 - ema_beta, cpu_p.cpu().data)
+            cpu_p = deepcopy(p).detach().cpu()
+            avg_p.mul_(ema_beta).add_(cpu_p * (1.0 - ema_beta))
             del cpu_p
 
         # writer.add_scalar('g_loss', g_loss.item(), global_steps) if args.rank == 0 else 0
@@ -217,7 +160,7 @@ def registrar_epocas_txt(epoca, d_loss, g_loss):
         var1 (float): valor da primeira variável.
         var2 (float): valor da segunda variável.
     """
-    caminho_arquivo = '/workspaces/container-workspace/tts-gan/log_de_treino/log_pytorch.txt'
+    caminho_arquivo = '/workspaces/vinicius.garcia/Projetos/tts-gan/log_de_treino/log_pytorch.txt'
     
     with open(caminho_arquivo, 'a') as f:
         f.write(f'Época {epoca}: d_loss = {d_loss:.4f}, g_loss = {g_loss:.4f}\n')

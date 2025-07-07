@@ -216,30 +216,18 @@ def train(args, gen_net: nn.Module, dis_net: nn.Module, gen_optimizer, dis_optim
         
 
         # Adversarial ground truths
-        imgs = torch.from_numpy(np.load('Projetos/tts-gan/X_batch.npy')).unsqueeze(dim=2)    #APAGAR
         real_imgs = imgs.type(torch.cuda.FloatTensor).cuda(args.gpu, non_blocking=True)
 
         # Sample noise as generator input
-        set_seed(1)                                                                     #APAGAR
         z = torch.cuda.FloatTensor(np.random.normal(0, 1, (imgs.shape[0], args.latent_dim))).cuda(args.gpu, non_blocking=True)
 
-        #print(f"generator random weight: {gen_net.state_dict()['module.blocks.1.0.fn.1.keys.weight'][0]}")#################################################################################################################################################################################################
-        #print(f"discriminator random weight: {dis_net.state_dict()['module.backbone.1.2.0.fn.1.queries.weight'][0]}")######################################################################################################################################################################################
         # ---------------------
         #  Train Discriminator
         # ---------------------
-        dis_net = dis_net.to('cpu')
-        gen_net = gen_net.to('cpu')
-        z = z.to('cpu')
-        real_imgs = real_imgs.to('cpu')
-
-        set_seed(1)
         real_validity = dis_net(real_imgs)
-        set_seed(1)
         fake_imgs = gen_net(z).detach()
         
         assert fake_imgs.size() == real_imgs.size(), f"fake_imgs.size(): {fake_imgs.size()} real_imgs.size(): {real_imgs.size()}"
-        set_seed(1)
         fake_validity = dis_net(fake_imgs)
 
         # cal loss

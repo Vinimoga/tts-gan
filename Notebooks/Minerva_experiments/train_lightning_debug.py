@@ -33,11 +33,8 @@ import argparse
 
 
 def set_seed(seed: int = 42):  
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
     L.seed_everything(seed)
 
 def none_or_float(value):
@@ -50,20 +47,22 @@ def none_or_float(value):
     
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--device', type=str, default="cpu")
+    parser.add_argument('--device', type=str, default="cuda")
     parser.add_argument('--n_epochs', type=int, default=300)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--seed', type=int, default=42)
-    parser.add_argument('--version', type=str, default="1")
+    parser.add_argument('--version', type=str, default="2")
     parser.add_argument('--beta1', type=float, default=0.9)
     parser.add_argument('--beta2', type=float, default=0.999)
     parser.add_argument('--gen_lr', type=float, default=0.0001)
     parser.add_argument('--dis_lr', type=float, default=0.0003)
     parser.add_argument('--assimetrical_percentage', type=float, default=1.0)
     parser.add_argument('--clip_grad', type=none_or_float, default=5., help="Valor de clipagem de gradiente ou None")
-    parser.add_argument('--save_dir', type=str, default='/workspaces/container-workspace/tts-gan/Notebooks/Minerva_experiments/training')
-    parser.add_argument('--name', type=str, default='experimentx')
+    parser.add_argument('--save_dir', type=str, default='/workspaces/vinicius.garcia/Projetos/tts-gan/Notebooks/Minerva_experiments/training')
+    parser.add_argument('--name', type=str, default='a')
     parser.add_argument('--data_path', type=str, default='tts-gan/DAGHAR_split_25_10_all/train/data/UCI_DAGHAR_Multiclass.csv')
+    parser.add_argument('--toggle', type=bool, default=False, help="Toggle for some functionality in the model")
+    parser.add_argument('--ema_enabled', type=bool, default=False, help="Enable or disable EMA (Exponential Moving Average)")
     opt = parser.parse_args()
 
     return opt
@@ -92,7 +91,7 @@ args = parse_args()
 print(args)
 
 set_seed(args.seed)
-device = 'cuda' 
+#args.device = 'cuda' 
 
 generator = TTSGAN_Generator(seq_len = 60, channels = 6)
 discriminator = TTSGAN_Discriminator(seq_len = 60, channels = 6, unsqueeze = True)
@@ -107,7 +106,8 @@ model = GAN(generator = generator,
             beta1 = args.beta1,
             beta2 = args.beta2,
             clip_grad = args.clip_grad,
-            toggle = False
+            toggle = args.toggle,
+            ema_enabled = args.ema_enabled,
             )
 
 train_data_set = daghar_load_dataset_with_label(
@@ -157,11 +157,12 @@ for batch in train_loader:
     break
 
 printing_callback = MyPrintingCallback()
+knn_callback = KNNValidationCallback(k=5, flatten=True)
 
 logger = CSVLogger(save_dir=args.save_dir, name=args.name, version=args.version)
 
 trainer = L.Trainer(accelerator=args.device, devices=1,
-                    callbacks=[printing_callback], #[printing_callback, knnvalidation_callback, tsnecallbackencoder],#[printing_callback, knnvalidation_callback, tsnecallbackencoder], #printing_callback
+                    callbacks=[printing_callback, knn_callback], #[printing_callback, knnvalidation_callback, tsnecallbackencoder],#[printing_callback, knnvalidation_callback, tsnecallbackencoder], #printing_callback
                     logger=logger, max_epochs=args.n_epochs)
 
 trainer.fit(model = model, datamodule = data_module)
@@ -171,7 +172,7 @@ print("Training complete. Model saved.")
 
 
 def send_telegram_message(message):
-    token = "8083579885:AAEGyRUnYB86xHtlukUbkzksSHjAsxxDNiU"
+    token = "7956630571:AAHPjuXEqfugy36K10e3amUhML7_tYWlEPE"
     chat_id = "7823372332"  # Substitua com o chat_id que você pegou do JSON
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {

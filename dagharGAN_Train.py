@@ -71,4 +71,4 @@ for i, class_name in enumerate([s for s in classes]):
           + f' --checkpoint_number {checkpoint_number}' + f' --data_path {data_path + classes[i]}'\
           + f' --channels {channels}' + f' --label_path {label_path[i]}'
     print(command)
-    os.system(command)
+    #os.system(command)
